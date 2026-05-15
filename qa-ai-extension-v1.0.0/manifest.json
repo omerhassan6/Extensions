@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "QA UI Analyzer & Bug Reporter",
+  "version": "1.0.0",
+  "description": "Capture screenshots and auto-generate bug reports with UI analysis",
+  "permissions": [
+    "scripting",
+    "activeTab",
+    "storage",
+    "tabs",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "src/popup.html",
+    "default_title": "QA Analyzer"
+  },
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "options_page": "src/options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content-script.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

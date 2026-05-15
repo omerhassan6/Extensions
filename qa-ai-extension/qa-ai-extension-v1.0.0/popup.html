@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h2>QA Bug Reporter</h2>
+
+    <!-- Tab Navigation -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="capture">Capture & Analyze</button>
+      <button class="tab-btn" data-tab="manual">Manual Report</button>
+      <button class="tab-btn" data-tab="history">History</button>
+    </div>
+
+    <!-- Tab 1: Capture & Analyze -->
+    <div id="capture" class="tab-content active">
+      <button id="captureBtn" class="primary-btn">📸 Capture Screenshot</button>
+      <div id="captureStatus" class="status"></div>
+      <canvas id="previewCanvas" style="max-width: 100%; border: 1px solid #ddd; margin-top: 10px; display: none;"></canvas>
+      <button id="analyzeBtn" class="primary-btn" style="display: none; margin-top: 10px;">🔍 Analyze for UI Issues</button>
+      <div id="analysisResult" class="result-box" style="display: none;"></div>
+      <button id="generateReportBtn" class="secondary-btn" style="display: none;">📋 Generate Bug Report</button>
+    </div>
+
+    <!-- Tab 2: Manual Report -->
+    <div id="manual" class="tab-content" style="display: none;">
+      <input type="file" id="imageUpload" accept="image/*" placeholder="Upload image">
+      <div id="manualPreview" style="max-width: 100%; border: 1px solid #ddd; margin-top: 10px; display: none;"></div>
+      <button id="analyzeManualBtn" class="primary-btn" style="display: none; margin-top: 10px;">🔍 Analyze Image</button>
+      <div id="manualAnalysisResult" class="result-box" style="display: none;"></div>
+      <button id="generateManualReportBtn" class="secondary-btn" style="display: none;">📋 Generate Report</button>
+    </div>
+
+    <!-- Tab 3: History -->
+    <div id="history" class="tab-content" style="display: none;">
+      <div id="reportHistory" class="history-list"></div>
+      <button id="clearHistoryBtn" class="danger-btn">🗑️ Clear History</button>
+    </div>
+
+    <!-- Generated Report Modal -->
+    <div id="reportModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Generated Bug Report</h3>
+        <div id="reportContent" class="report-content"></div>
+        <button id="copyReportBtn" class="primary-btn">📋 Copy Report</button>
+        <button id="copyCurlBtn" class="primary-btn">🔗 Copy CURL Request</button>
+        <button id="downloadReportBtn" class="secondary-btn">⬇️ Download as JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

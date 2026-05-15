@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "QA AI Assistant - UI Bug Analyzer",
+  "version": "1.0.0",
+  "description": "Capture screenshots and automatically generate comprehensive bug reports with AI-powered UI analysis",
+  "permissions": [
+    "scripting",
+    "activeTab",
+    "storage",
+    "tabs",
+    "clipboardWrite",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "src/background/service-worker.ts"
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "QA AI Assistant",
+    "default_icons": {
+      "16": "public/icon-16.png",
+      "48": "public/icon-48.png",
+      "128": "public/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "public/icon-16.png",
+    "48": "public/icon-48.png",
+    "128": "public/icon-128.png",
+    "256": "public/icon-256.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content/content-script.ts"],
+      "run_at": "document_end",
+      "all_frames": false
+    }
+  ],
+  "options_page": "src/popup/options.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["src/content/*.ts", "src/content/*.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
