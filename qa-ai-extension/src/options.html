@@ -4,87 +4,201 @@
   <meta charset="UTF-8">
   <title>QA Reporter — Settings</title>
   <style>
+    :root {
+      --bg-0:        #04060C;
+      --bg-1:        #070B16;
+      --bg-2:        #0B1124;
+      --surface:     rgba(15, 23, 50, 0.7);
+      --surface-2:   rgba(20, 30, 65, 0.85);
+      --border:      rgba(99, 130, 234, 0.18);
+      --border-hi:   rgba(99, 165, 255, 0.42);
+      --text:        #E6EBFB;
+      --text-dim:    #94A3C8;
+      --text-mute:   #5D6C95;
+      --accent:      #5B8DEF;
+      --accent-hi:   #7AAEFF;
+      --accent-glow: rgba(91, 141, 239, 0.55);
+      --cyan:        #22D3EE;
+      --magenta:     #C084FC;
+      --good:        #34D399;
+      --bad:         #F43F5E;
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
-      background: #F1F5F9;
-      color: #0F172A;
+    html, body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--text);
       font-size: 14px;
-      line-height: 1.5;
+      line-height: 1.55;
       min-height: 100vh;
+      background: var(--bg-0);
+      overflow-x: hidden;
     }
+
+    body {
+      position: relative;
+      background:
+        radial-gradient(ellipse 800px 360px at 12% -10%, rgba(91, 141, 239, 0.20), transparent 65%),
+        radial-gradient(ellipse 700px 360px at 110% 14%, rgba(124, 58, 237, 0.16), transparent 65%),
+        radial-gradient(ellipse 900px 500px at 50% 110%, rgba(34, 211, 238, 0.10), transparent 60%),
+        linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 60%, var(--bg-0) 100%);
+      animation: bgDrift 22s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgDrift {
+      0%   { background-position: 0% 0%; }
+      100% { background-position: 6% 4%; }
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(91, 141, 239, 0.04) 1px, transparent 1px) 0 0 / 44px 44px,
+        linear-gradient(90deg, rgba(91, 141, 239, 0.04) 1px, transparent 1px) 0 0 / 44px 44px;
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+      pointer-events: none;
+      z-index: 0;
+      animation: gridPan 26s linear infinite;
+    }
+
+    @keyframes gridPan { to { background-position: 44px 44px, 44px 44px; } }
 
     /* Header */
     .page-header {
-      background: linear-gradient(135deg, #4338CA 0%, #7C3AED 100%);
-      padding: 20px 32px;
+      position: relative;
+      padding: 26px 32px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
+      background:
+        linear-gradient(180deg, rgba(11, 17, 36, 0.95), rgba(7, 11, 22, 0.5)),
+        linear-gradient(135deg, rgba(91, 141, 239, 0.18), rgba(124, 58, 237, 0.10) 50%, rgba(34, 211, 238, 0.10));
+      border-bottom: 1px solid var(--border);
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .page-header::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-hi), var(--cyan), transparent);
+      animation: scanLine 5s ease-in-out infinite;
+    }
+
+    @keyframes scanLine {
+      0%, 100% { transform: translateX(-30%); opacity: 0.45; }
+      50%      { transform: translateX(30%);  opacity: 1; }
     }
 
     .header-icon {
-      width: 38px;
-      height: 38px;
-      background: rgba(255,255,255,0.18);
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 10px;
+      position: relative;
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(140deg, #1B2A55, #0B1124);
+      border: 1px solid var(--border-hi);
+      border-radius: 11px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 0 18px var(--accent-glow);
+      animation: brandPulse 3.2s ease-in-out infinite;
+    }
+
+    @keyframes brandPulse {
+      0%, 100% { box-shadow: 0 0 12px var(--accent-glow); }
+      50%      { box-shadow: 0 0 26px var(--accent-glow); }
     }
 
     .header-icon svg {
-      width: 20px;
-      height: 20px;
-      stroke: #ffffff;
+      width: 22px;
+      height: 22px;
+      stroke: var(--accent-hi);
+      filter: drop-shadow(0 0 4px var(--accent-glow));
     }
 
     .header-text h1 {
-      font-size: 17px;
+      font-size: 19px;
       font-weight: 700;
-      color: #ffffff;
-      letter-spacing: -0.3px;
+      color: #FFFFFF;
+      letter-spacing: 0.3px;
+      text-shadow: 0 0 14px var(--accent-glow);
     }
 
     .header-text p {
-      font-size: 12px;
-      color: rgba(255,255,255,0.65);
-      margin-top: 1px;
+      font-size: 11.5px;
+      color: var(--cyan);
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      font-weight: 600;
     }
 
     /* Main */
     .page-main {
-      max-width: 580px;
+      position: relative;
+      max-width: 620px;
       margin: 32px auto;
-      padding: 0 24px 48px;
+      padding: 0 24px 56px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
+      z-index: 1;
+      animation: pageIn 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(12px); filter: blur(4px); }
+      to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
     }
 
     .section-label {
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
-      color: #94A3B8;
+      color: var(--accent-hi);
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      padding: 0 2px;
-      margin-top: 8px;
+      letter-spacing: 1.4px;
+      padding: 0 4px;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-label::before {
+      content: '';
+      width: 18px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), var(--cyan));
     }
 
     .card {
-      background: #ffffff;
-      border: 1px solid #E2E8F0;
+      background: linear-gradient(180deg, rgba(15, 23, 50, 0.85), rgba(11, 17, 36, 0.95));
+      border: 1px solid var(--border);
       border-radius: 14px;
       overflow: hidden;
+      box-shadow:
+        0 8px 32px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .card:hover {
+      border-color: var(--border-hi);
+      box-shadow:
+        0 10px 38px rgba(0,0,0,0.55),
+        0 0 24px rgba(91, 141, 239, 0.12),
+        inset 0 1px 0 rgba(255,255,255,0.06);
     }
 
     .field {
       padding: 16px 20px;
-      border-bottom: 1px solid #F1F5F9;
+      border-bottom: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -95,80 +209,82 @@
     .field-label {
       font-size: 13px;
       font-weight: 600;
-      color: #0F172A;
+      color: var(--text);
+      letter-spacing: 0.1px;
     }
 
     .field-desc {
       font-size: 12px;
-      color: #94A3B8;
+      color: var(--text-mute);
     }
 
     .field input,
     .field select {
       width: 100%;
-      padding: 9px 12px;
-      border: 1.5px solid #E2E8F0;
-      border-radius: 8px;
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
       font-size: 13px;
       font-family: inherit;
-      color: #0F172A;
-      background: #F8FAFC;
+      color: var(--text);
+      background: rgba(4, 6, 12, 0.7);
       outline: none;
-      transition: border-color 0.15s, background 0.15s;
+      transition: all 0.2s ease;
       margin-top: 2px;
     }
 
+    .field select { appearance: none; cursor: pointer; }
+
     .field input[type="password"] {
-      font-family: 'Courier New', monospace;
-      letter-spacing: 0.1em;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      letter-spacing: 0.12em;
     }
 
     .field input:focus,
     .field select:focus {
-      border-color: #818CF8;
-      background: #ffffff;
+      border-color: var(--accent-hi);
+      background: rgba(11, 17, 36, 0.85);
+      box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.18), 0 0 22px rgba(91, 141, 239, 0.18);
     }
 
-    .field input::placeholder { color: #CBD5E1; }
+    .field input::placeholder { color: var(--text-mute); }
 
     /* Toggle Switch */
-    .toggle-group {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 6px;
-    }
-
     .toggle-switch {
       position: relative;
-      width: 44px;
-      height: 24px;
-      background: #E2E8F0;
-      border-radius: 12px;
+      width: 46px;
+      height: 26px;
+      background: rgba(4, 6, 12, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 14px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.28s ease;
+      flex-shrink: 0;
     }
 
-    .toggle-switch.active { background: #4F46E5; }
+    .toggle-switch.active {
+      background: linear-gradient(135deg, #2447B6, #5B8DEF);
+      border-color: var(--accent-hi);
+      box-shadow: 0 0 18px var(--accent-glow);
+    }
 
     .toggle-switch::after {
       content: '';
       position: absolute;
       width: 20px;
       height: 20px;
-      background: #ffffff;
-      border-radius: 10px;
+      background: linear-gradient(180deg, #E6EBFB, #94A3C8);
+      border-radius: 50%;
       top: 2px;
       left: 2px;
-      transition: left 0.2s;
+      transition: all 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
 
-    .toggle-switch.active::after { left: 22px; }
-
-    .toggle-label {
-      font-size: 12px;
-      font-weight: 500;
-      color: #64748B;
+    .toggle-switch.active::after {
+      left: 22px;
+      background: linear-gradient(180deg, #FFFFFF, #7AAEFF);
+      box-shadow: 0 0 12px var(--accent-glow);
     }
 
     /* Info badge */
@@ -177,37 +293,38 @@
       align-items: center;
       gap: 6px;
       font-size: 11px;
-      padding: 6px 10px;
-      background: #EEF2FF;
-      border: 1px solid #C7D2FE;
-      border-radius: 6px;
-      color: #4338CA;
-      font-weight: 500;
-      margin-top: 8px;
+      padding: 7px 11px;
+      background: rgba(91, 141, 239, 0.10);
+      border: 1px solid var(--border-hi);
+      border-radius: 7px;
+      color: var(--accent-hi);
+      font-weight: 600;
+      margin-top: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      width: fit-content;
     }
 
     .info-badge svg {
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
       flex-shrink: 0;
     }
-
-    .hidden { display: none !important; }
 
     /* Range slider */
     .range-row {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-top: 2px;
+      gap: 14px;
+      margin-top: 6px;
     }
 
     .field input[type="range"] {
       flex: 1;
       height: 4px;
       appearance: none;
-      background: #E2E8F0;
-      border: none;
+      background: rgba(4, 6, 12, 0.85);
+      border: 1px solid var(--border);
       border-radius: 4px;
       padding: 0;
       cursor: pointer;
@@ -215,120 +332,163 @@
 
     .field input[type="range"]::-webkit-slider-thumb {
       appearance: none;
-      width: 16px;
-      height: 16px;
+      width: 17px;
+      height: 17px;
       border-radius: 50%;
-      background: #4F46E5;
+      background: linear-gradient(135deg, var(--accent-hi), var(--cyan));
       cursor: pointer;
-      box-shadow: 0 1px 4px rgba(79,70,229,0.4);
-      transition: transform 0.13s;
+      box-shadow: 0 0 12px var(--accent-glow);
+      transition: transform 0.15s ease, box-shadow 0.18s ease;
+      border: 1px solid #FFFFFF22;
     }
 
     .field input[type="range"]::-webkit-slider-thumb:hover {
       transform: scale(1.2);
+      box-shadow: 0 0 22px var(--accent-glow);
     }
 
     .range-value {
       font-size: 13px;
       font-weight: 700;
-      color: #4F46E5;
-      min-width: 34px;
+      color: var(--accent-hi);
+      min-width: 38px;
       text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+      text-shadow: 0 0 8px var(--accent-glow);
     }
 
     /* Footer actions */
     .actions {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-top: 4px;
+      gap: 14px;
+      margin-top: 6px;
       flex-wrap: wrap;
     }
 
     .btn-save {
-      padding: 11px 28px;
-      background: #4F46E5;
-      color: #ffffff;
-      border: none;
-      border-radius: 10px;
+      position: relative;
+      padding: 12px 32px;
+      background: linear-gradient(135deg, #2447B6 0%, #5B8DEF 55%, #7AAEFF 100%);
+      color: #FFFFFF;
+      border: 1px solid rgba(122, 174, 255, 0.5);
+      border-radius: 11px;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 2px 10px rgba(79,70,229,0.3);
-      transition: background 0.13s, transform 0.13s, box-shadow 0.13s;
-      letter-spacing: -0.1px;
+      box-shadow: 0 4px 20px rgba(91, 141, 239, 0.42), inset 0 1px 0 rgba(255,255,255,0.18);
+      transition: all 0.2s cubic-bezier(0.34, 1.4, 0.64, 1);
+      letter-spacing: 0.4px;
+      overflow: hidden;
     }
 
+    .btn-save::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.22) 50%, transparent 70%);
+      transform: translateX(-120%);
+      transition: transform 0.7s ease;
+    }
+
+    .btn-save:hover::before { transform: translateX(120%); }
+
     .btn-save:hover {
-      background: #4338CA;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(79,70,229,0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(91, 141, 239, 0.62), 0 0 24px var(--accent-glow);
+      border-color: var(--cyan);
     }
 
     .btn-save:active { transform: translateY(0); }
 
     .btn-test {
-      padding: 8px 16px;
-      background: #F1F5F9;
-      color: #475569;
-      border: 1px solid #E2E8F0;
-      border-radius: 8px;
-      font-size: 13px;
+      padding: 9px 18px;
+      background: rgba(91, 141, 239, 0.10);
+      color: var(--accent-hi);
+      border: 1px solid var(--border-hi);
+      border-radius: 9px;
+      font-size: 12.5px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.13s;
+      transition: all 0.2s ease;
+      letter-spacing: 0.3px;
+      width: auto;
     }
 
-    .btn-test:hover { background: #E2E8F0; }
+    .btn-test:hover {
+      background: rgba(91, 141, 239, 0.22);
+      border-color: var(--cyan);
+      color: var(--cyan);
+      box-shadow: 0 0 14px var(--accent-glow);
+    }
 
     .status-msg {
       font-size: 13px;
       font-weight: 500;
-      padding: 8px 14px;
-      border-radius: 8px;
+      padding: 9px 14px;
+      border-radius: 9px;
       display: none;
-      min-width: 180px;
+      min-width: 200px;
+      border: 1px solid;
+      animation: msgIn 0.3s ease;
+    }
+
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateX(-6px); }
+      to   { opacity: 1; transform: translateX(0); }
     }
 
     .status-msg.success {
       display: flex;
       align-items: center;
-      gap: 6px;
-      background: #ECFDF5;
-      color: #065F46;
-      border: 1px solid #A7F3D0;
+      gap: 8px;
+      background: rgba(52, 211, 153, 0.10);
+      color: var(--good);
+      border-color: rgba(52, 211, 153, 0.35);
+      box-shadow: inset 0 0 14px rgba(52, 211, 153, 0.10);
     }
 
     .status-msg.error {
       display: flex;
       align-items: center;
-      gap: 6px;
-      background: #FEF2F2;
-      color: #991B1B;
-      border: 1px solid #FECACA;
+      gap: 8px;
+      background: rgba(244, 63, 94, 0.10);
+      color: #FCA5A5;
+      border-color: rgba(244, 63, 94, 0.36);
+      box-shadow: inset 0 0 14px rgba(244, 63, 94, 0.10);
     }
 
     .status-msg.loading {
       display: flex;
       align-items: center;
-      gap: 6px;
-      background: #EEF2FF;
-      color: #4338CA;
-      border: 1px solid #C7D2FE;
+      gap: 8px;
+      background: rgba(91, 141, 239, 0.10);
+      color: var(--accent-hi);
+      border-color: var(--border-hi);
+      box-shadow: inset 0 0 14px rgba(91, 141, 239, 0.10);
     }
 
     .spinner {
-      width: 12px;
-      height: 12px;
-      border: 2px solid currentColor;
-      border-top-color: transparent;
+      width: 13px;
+      height: 13px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-right-color: currentColor;
       border-radius: 50%;
-      animation: spin 0.55s linear infinite;
+      animation: spin 0.7s linear infinite;
+      filter: drop-shadow(0 0 4px currentColor);
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
     }
+
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -342,20 +502,19 @@
     </div>
     <div class="header-text">
       <h1>Settings</h1>
-      <p>QA Reporter — AI Bug Analysis</p>
+      <p>QA Reporter · AI Bug Analysis</p>
     </div>
   </header>
 
   <main class="page-main">
 
-    <!-- Server Mode Section -->
     <div class="section-label">Operation Mode</div>
     <div class="card">
       <div class="field">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div class="toggle-row">
           <div>
             <div class="field-label">Backend Server Mode</div>
-            <div class="field-desc">Use your server for AI analysis (recommended)</div>
+            <div class="field-desc">Route analysis through your own server (recommended)</div>
           </div>
           <div class="toggle-switch" id="serverModeToggle"></div>
         </div>
@@ -366,29 +525,27 @@
       </div>
       <div class="field" id="serverUrlField" style="display: none;">
         <div class="field-label">Server URL</div>
-        <div class="field-desc">Base URL of your QA Reporter backend</div>
-        <input type="text" id="serverUrl" placeholder="https://your-server.com/api">
-        <button class="btn-test" id="testServerBtn" style="margin-top: 8px; width: auto;">Test Connection</button>
-        <div class="status-msg" id="testStatus" style="margin-top: 8px;"></div>
+        <div class="field-desc">Base URL of your QA Reporter backend (e.g. http://localhost:3000/api)</div>
+        <input type="text" id="serverUrl" placeholder="http://localhost:3000/api">
+        <button class="btn-test" id="testServerBtn" style="margin-top: 10px;">Test Connection</button>
+        <div class="status-msg" id="testStatus" style="margin-top: 10px;"></div>
       </div>
       <div class="field" id="serverKeyField" style="display: none;">
         <div class="field-label">Server API Key</div>
-        <div class="field-desc">Optional: authentication key for your server</div>
+        <div class="field-desc">Optional bearer token for your backend</div>
         <input type="password" id="serverKey" placeholder="sk-…">
       </div>
     </div>
 
-    <!-- Direct API Mode Section -->
     <div class="section-label">Direct API (Optional)</div>
     <div class="card">
       <div class="field">
         <div class="field-label">Claude API Key</div>
-        <div class="field-desc">Leave empty to use server mode</div>
+        <div class="field-desc">Leave empty to use server / demo mode</div>
         <input type="password" id="apiKey" placeholder="sk-ant-…">
       </div>
     </div>
 
-    <!-- Bug Tracker Integration -->
     <div class="section-label">Bug Tracker Integration</div>
     <div class="card">
       <div class="field">
@@ -403,7 +560,6 @@
       </div>
     </div>
 
-    <!-- Report Defaults -->
     <div class="section-label">Report Defaults</div>
     <div class="card">
       <div class="field">
@@ -426,7 +582,6 @@
       </div>
     </div>
 
-    <!-- Actions -->
     <div class="actions">
       <button class="btn-save" id="saveBtn">Save Settings</button>
       <div class="status-msg" id="statusMessage"></div>
@@ -434,107 +589,6 @@
 
   </main>
 
-  <script>
-    const serverModeToggle = document.getElementById('serverModeToggle');
-    const serverUrlField = document.getElementById('serverUrlField');
-    const serverKeyField = document.getElementById('serverKeyField');
-    const modeText = document.getElementById('modeText');
-    const qualitySlider = document.getElementById('screenshotQuality');
-    const qualityDisplay = document.getElementById('qualityDisplay');
-    const testServerBtn = document.getElementById('testServerBtn');
-    const testStatus = document.getElementById('testStatus');
-
-    // Live quality display
-    qualitySlider.addEventListener('input', () => {
-      qualityDisplay.textContent = qualitySlider.value + '%';
-    });
-
-    // Toggle server mode
-    serverModeToggle.addEventListener('click', () => {
-      serverModeToggle.classList.toggle('active');
-      const isActive = serverModeToggle.classList.contains('active');
-      serverUrlField.style.display = isActive ? 'flex' : 'none';
-      serverKeyField.style.display = isActive ? 'flex' : 'none';
-      modeText.textContent = isActive ? 'Using server mode' : 'Using demo mode';
-    });
-
-    // Test server connection
-    testServerBtn.addEventListener('click', async () => {
-      const url = document.getElementById('serverUrl').value.trim();
-      if (!url) {
-        showTestStatus('Enter a server URL', 'error');
-        return;
-      }
-
-      showTestStatus('Testing connection…', 'loading');
-      try {
-        const res = await fetch(url + '/health', { method: 'GET', timeout: 5000 });
-        if (res.ok) {
-          showTestStatus('✓ Server connected', 'success');
-        } else {
-          showTestStatus('Server returned ' + res.status, 'error');
-        }
-      } catch (e) {
-        showTestStatus('Connection failed: ' + e.message, 'error');
-      }
-    });
-
-    function showTestStatus(msg, type) {
-      testStatus.textContent = msg;
-      if (type === 'loading') {
-        testStatus.innerHTML = '<div class="spinner"></div>' + msg;
-      } else {
-        testStatus.textContent = msg;
-      }
-      testStatus.className = 'status-msg ' + type;
-    }
-
-    // Save
-    document.getElementById('saveBtn').addEventListener('click', () => {
-      const serverMode = serverModeToggle.classList.contains('active');
-      chrome.storage.sync.set({
-        serverMode,
-        serverUrl: document.getElementById('serverUrl').value,
-        serverKey: document.getElementById('serverKey').value,
-        apiKey: document.getElementById('apiKey').value,
-        bugApiEndpoint: document.getElementById('bugApiEndpoint').value,
-        apiToken: document.getElementById('apiToken').value,
-        bugPriority: document.getElementById('bugPriority').value,
-        screenshotQuality: parseInt(qualitySlider.value)
-      }, () => {
-        const msg = document.getElementById('statusMessage');
-        msg.textContent = '✓ Settings saved successfully';
-        msg.className = 'status-msg success';
-        setTimeout(() => { msg.className = 'status-msg'; }, 3000);
-      });
-    });
-
-    // Load
-    chrome.storage.sync.get({
-      serverMode: false,
-      serverUrl: '',
-      serverKey: '',
-      apiKey: '',
-      bugApiEndpoint: '',
-      apiToken: '',
-      bugPriority: 'medium',
-      screenshotQuality: 90
-    }, (items) => {
-      if (items.serverMode) {
-        serverModeToggle.classList.add('active');
-        serverUrlField.style.display = 'flex';
-        serverKeyField.style.display = 'flex';
-        modeText.textContent = 'Using server mode';
-      }
-      document.getElementById('serverUrl').value = items.serverUrl;
-      document.getElementById('serverKey').value = items.serverKey;
-      document.getElementById('apiKey').value = items.apiKey;
-      document.getElementById('bugApiEndpoint').value = items.bugApiEndpoint;
-      document.getElementById('apiToken').value = items.apiToken;
-      document.getElementById('bugPriority').value = items.bugPriority;
-      qualitySlider.value = items.screenshotQuality;
-      qualityDisplay.textContent = items.screenshotQuality + '%';
-    });
-  </script>
+  <script src="options.js"></script>
 </body>
 </html>

@@ -5,44 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QA Reporter — AI-Powered Bug Reporting</title>
   <style>
+    :root {
+      --bg-0: #03050B;
+      --bg-1: #060A14;
+      --bg-2: #0A1024;
+      --bg-3: #111A35;
+      --surface: rgba(15, 23, 50, 0.7);
+      --border: rgba(99, 130, 234, 0.18);
+      --border-hi: rgba(99, 165, 255, 0.42);
+      --text: #E6EBFB;
+      --text-dim: #94A3C8;
+      --text-mute: #5D6C95;
+      --accent: #5B8DEF;
+      --accent-hi: #7AAEFF;
+      --accent-glow: rgba(91, 141, 239, 0.55);
+      --cyan: #22D3EE;
+      --magenta: #C084FC;
+      --good: #34D399;
+    }
+
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
-    :root {
-      --primary: #4F46E5;
-      --primary-dark: #4338CA;
-      --purple: #7C3AED;
-      --success: #10B981;
-      --text: #0F172A;
-      --text-light: #64748B;
-      --bg: #F8FAFC;
-      --bg-light: #F1F5F9;
-      --border: #E2E8F0;
-      --white: #ffffff;
-    }
-
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
-      background: var(--white);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-0);
       color: var(--text);
       line-height: 1.6;
       overflow-x: hidden;
+      position: relative;
     }
+
+    /* Animated background field */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 900px 460px at 12% 8%, rgba(91, 141, 239, 0.22), transparent 65%),
+        radial-gradient(ellipse 900px 460px at 110% 16%, rgba(124, 58, 237, 0.18), transparent 65%),
+        radial-gradient(ellipse 1100px 600px at 50% 110%, rgba(34, 211, 238, 0.10), transparent 60%),
+        linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 50%, var(--bg-0) 100%);
+      animation: drift 26s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(91, 141, 239, 0.04) 1px, transparent 1px) 0 0 / 56px 56px,
+        linear-gradient(90deg, rgba(91, 141, 239, 0.04) 1px, transparent 1px) 0 0 / 56px 56px;
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+      pointer-events: none;
+      z-index: 0;
+      animation: gridPan 30s linear infinite;
+    }
+
+    @keyframes drift {
+      0%   { background-position: 0% 0%, 0% 0%, 0% 0%, 0 0; }
+      100% { background-position: 4% 6%, -3% -2%, 2% -4%, 0 0; }
+    }
+
+    @keyframes gridPan { to { background-position: 56px 56px, 56px 56px; } }
 
     /* ── Header/Nav ──────────────────────────────── */
     header {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
+      background: rgba(6, 10, 20, 0.7);
+      backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
-      padding: 16px 0;
+      padding: 14px 0;
     }
 
     .nav-wrapper {
@@ -58,231 +100,347 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 18px;
+      font-size: 19px;
       font-weight: 800;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #4338CA, #7C3AED);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      letter-spacing: 0.5px;
+      color: #FFFFFF;
+      text-shadow: 0 0 18px var(--accent-glow);
     }
 
-    .logo svg {
-      width: 28px;
-      height: 28px;
-      stroke: #4338CA;
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(140deg, #1B2A55, #0B1124);
+      border: 1px solid var(--border-hi);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 18px var(--accent-glow);
+      animation: brandPulse 3.2s ease-in-out infinite;
+    }
+
+    @keyframes brandPulse {
+      0%, 100% { box-shadow: 0 0 12px var(--accent-glow); }
+      50%      { box-shadow: 0 0 28px var(--accent-glow); }
+    }
+
+    .logo-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--accent-hi);
+      filter: drop-shadow(0 0 4px var(--accent-glow));
     }
 
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
     }
 
     .btn {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
+      padding: 11px 22px;
+      border: 1px solid transparent;
+      border-radius: 11px;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.15s ease;
-      letter-spacing: -0.1px;
+      transition: all 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
+      letter-spacing: 0.3px;
       text-decoration: none;
+      overflow: hidden;
+      font-family: inherit;
     }
 
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%);
+      transform: translateX(-120%);
+      transition: transform 0.7s ease;
+      pointer-events: none;
+    }
+
+    .btn:hover::before { transform: translateX(120%); }
+
     .btn-primary {
-      background: linear-gradient(135deg, #4338CA, #7C3AED);
-      color: white;
-      box-shadow: 0 4px 20px rgba(67, 56, 202, 0.3);
+      background: linear-gradient(135deg, #2447B6 0%, #5B8DEF 55%, #7AAEFF 100%);
+      color: #FFFFFF;
+      border-color: rgba(122, 174, 255, 0.5);
+      box-shadow: 0 4px 22px rgba(91, 141, 239, 0.45), inset 0 1px 0 rgba(255,255,255,0.18);
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(67, 56, 202, 0.4);
+      box-shadow: 0 10px 38px rgba(91, 141, 239, 0.7), 0 0 28px var(--accent-glow);
+      border-color: var(--cyan);
     }
 
     .btn-secondary {
-      background: var(--bg);
+      background: rgba(91, 141, 239, 0.10);
       color: var(--text);
-      border: 1.5px solid var(--border);
+      border-color: var(--border-hi);
+      backdrop-filter: blur(6px);
     }
 
     .btn-secondary:hover {
-      background: var(--bg-light);
-      border-color: #C7D2FE;
+      background: rgba(91, 141, 239, 0.20);
+      border-color: var(--accent-hi);
+      box-shadow: 0 0 22px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+
+    .btn-lg {
+      padding: 15px 34px;
+      font-size: 15px;
     }
 
     /* ── Hero Section ────────────────────────────── */
     .hero {
       position: relative;
-      overflow: hidden;
       padding: 120px 24px 80px;
-      background: linear-gradient(180deg, rgba(67, 56, 202, 0.05) 0%, rgba(124, 58, 237, 0.03) 100%);
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -20%;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(79, 70, 229, 0.1), transparent);
-      border-radius: 50%;
-      pointer-events: none;
+      z-index: 1;
     }
 
     .hero-content {
-      max-width: 800px;
+      max-width: 860px;
       margin: 0 auto;
       text-align: center;
-      position: relative;
-      z-index: 2;
+      animation: heroIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes heroIn {
+      from { opacity: 0; transform: translateY(20px); filter: blur(6px); }
+      to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border: 1px solid var(--border-hi);
+      border-radius: 999px;
+      background: rgba(91, 141, 239, 0.10);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-hi);
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      margin-bottom: 28px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+      animation: blink 1.6s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.4; }
     }
 
     .hero h1 {
-      font-size: 52px;
-      font-weight: 900;
-      line-height: 1.1;
-      margin-bottom: 20px;
-      letter-spacing: -1px;
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.05;
+      margin-bottom: 22px;
+      letter-spacing: -1.2px;
+      color: #FFFFFF;
     }
 
     .hero-highlight {
-      background: linear-gradient(135deg, #4338CA, #7C3AED);
+      background: linear-gradient(135deg, #7AAEFF 0%, #22D3EE 50%, #C084FC 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      background-size: 200% 100%;
+      animation: gradient 8s ease infinite;
+    }
+
+    @keyframes gradient {
+      0%, 100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
     }
 
     .hero p {
       font-size: 18px;
-      color: var(--text-light);
-      margin-bottom: 32px;
+      color: var(--text-dim);
+      margin-bottom: 36px;
       line-height: 1.7;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .hero-cta {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 14px;
       flex-wrap: wrap;
-      margin-bottom: 60px;
-    }
-
-    .btn-lg {
-      padding: 14px 32px;
-      font-size: 16px;
+      margin-bottom: 64px;
     }
 
     .hero-image {
-      margin-top: 60px;
+      margin-top: 64px;
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-      border: 1px solid var(--border);
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        0 0 60px rgba(91, 141, 239, 0.22);
+      border: 1px solid var(--border-hi);
+      animation: float 6s ease-in-out infinite;
     }
 
-    .hero-image img {
-      width: 100%;
-      display: block;
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
     }
 
     /* ── Features Section ────────────────────────── */
     .features {
+      position: relative;
       max-width: 1200px;
       margin: 0 auto;
       padding: 100px 24px;
+      z-index: 1;
     }
 
     .section-header {
       text-align: center;
-      margin-bottom: 80px;
+      margin-bottom: 70px;
     }
 
     .section-label {
-      font-size: 12px;
+      display: inline-block;
+      font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--primary);
-      margin-bottom: 12px;
+      letter-spacing: 1.4px;
+      color: var(--accent-hi);
+      margin-bottom: 14px;
+      padding: 5px 12px;
+      border: 1px solid var(--border-hi);
+      border-radius: 999px;
+      background: rgba(91, 141, 239, 0.08);
     }
 
     .section-title {
-      font-size: 42px;
-      font-weight: 900;
+      font-size: 44px;
+      font-weight: 800;
       margin-bottom: 16px;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.8px;
+      color: #FFFFFF;
     }
 
     .section-desc {
-      font-size: 18px;
-      color: var(--text-light);
-      max-width: 600px;
+      font-size: 17px;
+      color: var(--text-dim);
+      max-width: 620px;
       margin: 0 auto;
     }
 
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 32px;
+      gap: 22px;
     }
 
     .feature-card {
-      padding: 32px 28px;
+      position: relative;
+      padding: 30px 28px;
       border: 1px solid var(--border);
       border-radius: 16px;
-      background: var(--white);
-      transition: all 0.3s ease;
+      background: linear-gradient(180deg, rgba(15, 23, 50, 0.7), rgba(11, 17, 36, 0.85));
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 16px;
+      padding: 1px;
+      background: linear-gradient(135deg, var(--accent), var(--cyan), var(--magenta));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.35s ease;
     }
 
     .feature-card:hover {
-      border-color: #C7D2FE;
-      box-shadow: 0 10px 40px rgba(67, 56, 202, 0.1);
-      transform: translateY(-4px);
+      border-color: transparent;
+      transform: translateY(-6px);
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(91, 141, 239, 0.22);
     }
 
+    .feature-card:hover::before { opacity: 0.55; }
+
     .feature-icon {
-      width: 48px;
-      height: 48px;
-      background: linear-gradient(135deg, #4338CA, #7C3AED);
-      border-radius: 12px;
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #1B2A55, #0B1124);
+      border: 1px solid var(--border-hi);
+      border-radius: 13px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
+      box-shadow: 0 0 22px var(--accent-glow);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: scale(1.08) rotate(-3deg);
+      box-shadow: 0 0 32px var(--accent-glow);
     }
 
     .feature-icon svg {
-      width: 28px;
-      height: 28px;
-      stroke: white;
+      width: 26px;
+      height: 26px;
+      stroke: var(--accent-hi);
+      filter: drop-shadow(0 0 6px var(--accent-glow));
     }
 
     .feature-card h3 {
-      font-size: 18px;
-      font-weight: 800;
+      font-size: 19px;
+      font-weight: 700;
       margin-bottom: 12px;
       letter-spacing: -0.3px;
+      color: #FFFFFF;
     }
 
     .feature-card p {
-      color: var(--text-light);
+      color: var(--text-dim);
       line-height: 1.7;
+      font-size: 14.5px;
     }
 
     /* ── How It Works ────────────────────────────── */
     .how-it-works {
-      background: linear-gradient(135deg, #4338CA 0%, #7C3AED 100%);
+      position: relative;
       padding: 100px 24px;
-      color: white;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(11, 17, 36, 0.45), rgba(7, 11, 22, 0.65));
     }
 
     .how-content {
@@ -292,92 +450,143 @@
 
     .how-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 40px;
-      margin-top: 60px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 28px;
+      margin-top: 56px;
     }
 
     .step {
+      position: relative;
       text-align: center;
+      padding: 32px 22px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(11, 17, 36, 0.55);
+      transition: all 0.3s ease;
+    }
+
+    .step:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-hi);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.4), 0 0 22px var(--accent-glow);
     }
 
     .step-number {
-      font-size: 48px;
-      font-weight: 900;
-      margin-bottom: 12px;
-      opacity: 0.3;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 18px;
+      color: #FFFFFF;
+      background: linear-gradient(135deg, #2447B6, #5B8DEF);
+      border: 1px solid var(--accent-hi);
+      border-radius: 14px;
+      box-shadow: 0 0 22px var(--accent-glow);
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .step h3 {
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #FFFFFF;
     }
 
     .step p {
-      opacity: 0.9;
+      color: var(--text-dim);
       line-height: 1.6;
+      font-size: 14px;
     }
 
     /* ── Pricing/CTA ─────────────────────────────── */
     .cta-section {
+      position: relative;
       max-width: 1200px;
       margin: 0 auto;
       padding: 100px 24px;
       text-align: center;
+      z-index: 1;
     }
 
     .pricing-card {
-      background: var(--white);
-      border: 2px solid var(--border);
-      border-radius: 16px;
-      padding: 40px 32px;
-      max-width: 500px;
+      position: relative;
+      background: linear-gradient(180deg, rgba(15, 23, 50, 0.85), rgba(11, 17, 36, 0.92));
+      border: 1px solid var(--border-hi);
+      border-radius: 18px;
+      padding: 44px 36px;
+      max-width: 480px;
       margin: 0 auto;
-      transition: all 0.3s ease;
+      transition: all 0.35s ease;
+      overflow: hidden;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .pricing-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 18px;
+      padding: 1px;
+      background: linear-gradient(135deg, var(--accent), var(--cyan), var(--magenta));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      opacity: 0.55;
     }
 
     .pricing-card:hover {
-      border-color: #C7D2FE;
-      box-shadow: 0 15px 50px rgba(67, 56, 202, 0.15);
+      transform: translateY(-4px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 0 36px var(--accent-glow);
+    }
+
+    .pricing-card h3 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #FFFFFF;
     }
 
     .price {
-      font-size: 48px;
-      font-weight: 900;
-      margin: 20px 0;
-      background: linear-gradient(135deg, #4338CA, #7C3AED);
+      font-size: 56px;
+      font-weight: 800;
+      margin: 18px 0 4px;
+      background: linear-gradient(135deg, #7AAEFF, #22D3EE);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      letter-spacing: -2px;
     }
 
     .price-label {
-      font-size: 14px;
-      color: var(--text-light);
-      margin-bottom: 20px;
+      font-size: 13px;
+      color: var(--text-mute);
+      margin-bottom: 14px;
+      letter-spacing: 0.4px;
     }
 
     .price-features {
       text-align: left;
-      margin: 32px 0;
+      margin: 30px 0 0;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 13px;
     }
 
     .price-feature {
       display: flex;
       align-items: center;
-      gap: 10px;
-      color: var(--text-light);
+      gap: 11px;
+      color: var(--text-dim);
+      font-size: 14px;
     }
 
     .price-feature svg {
       width: 18px;
       height: 18px;
       flex-shrink: 0;
-      stroke: var(--success);
+      stroke: var(--good);
+      filter: drop-shadow(0 0 4px var(--good));
     }
 
     /* ── Auth Modal ──────────────────────────────── */
@@ -385,31 +594,36 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(4px);
+      background: rgba(2, 4, 10, 0.78);
+      backdrop-filter: blur(10px);
       z-index: 1000;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 22px;
+      animation: backdropIn 0.25s ease;
     }
 
-    .modal-backdrop.active {
-      display: flex;
-    }
+    @keyframes backdropIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-backdrop.active { display: flex; }
 
     .modal {
-      background: white;
+      position: relative;
+      background: linear-gradient(180deg, rgba(15, 23, 50, 0.98), rgba(7, 11, 22, 0.98));
+      border: 1px solid var(--border-hi);
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      padding: 40px 32px;
-      max-width: 420px;
+      box-shadow:
+        0 30px 90px rgba(0, 0, 0, 0.7),
+        0 0 60px rgba(91, 141, 239, 0.18);
+      padding: 44px 36px;
+      max-width: 440px;
       width: 100%;
-      animation: slideUp 0.3s ease;
+      animation: modalIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.94) translateY(16px); filter: blur(6px); }
+      to   { opacity: 1; transform: scale(1) translateY(0);       filter: blur(0); }
     }
 
     .modal-close {
@@ -418,20 +632,23 @@
       right: 16px;
       width: 36px;
       height: 36px;
-      background: var(--bg);
-      border: none;
-      border-radius: 8px;
+      background: rgba(91, 141, 239, 0.10);
+      border: 1px solid var(--border);
+      border-radius: 9px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 20px;
-      color: var(--text-light);
-      transition: background 0.2s;
+      color: var(--text-dim);
+      transition: all 0.25s ease;
     }
 
     .modal-close:hover {
-      background: var(--bg-light);
+      background: rgba(244, 63, 94, 0.18);
+      border-color: rgba(244, 63, 94, 0.45);
+      color: #FCA5A5;
+      transform: rotate(90deg);
     }
 
     .modal-header {
@@ -440,34 +657,40 @@
     }
 
     .modal-header h2 {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 800;
-      margin-bottom: 8px;
+      color: #FFFFFF;
+      margin-bottom: 6px;
     }
 
     .modal-header p {
-      color: var(--text-light);
+      color: var(--text-dim);
       font-size: 14px;
     }
 
     .auth-option {
-      padding: 14px 16px;
-      border: 1.5px solid var(--border);
+      padding: 14px 18px;
+      border: 1px solid var(--border-hi);
       border-radius: 12px;
-      background: var(--white);
+      background: rgba(91, 141, 239, 0.08);
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 12px;
       font-size: 14px;
-      font-weight: 700;
-      transition: all 0.2s;
+      font-weight: 600;
+      color: var(--text);
+      transition: all 0.22s ease;
       margin-bottom: 12px;
+      font-family: inherit;
+      width: 100%;
     }
 
     .auth-option:hover {
-      border-color: #C7D2FE;
-      background: var(--bg);
+      background: rgba(91, 141, 239, 0.18);
+      border-color: var(--cyan);
+      box-shadow: 0 0 22px var(--accent-glow);
+      transform: translateY(-1px);
     }
 
     .auth-option svg {
@@ -479,9 +702,11 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin: 24px 0;
-      color: var(--text-light);
-      font-size: 13px;
+      margin: 22px 0;
+      color: var(--text-mute);
+      font-size: 12.5px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
     }
 
     .auth-divider::before,
@@ -499,74 +724,97 @@
     }
 
     .auth-input {
-      padding: 11px 14px;
-      border: 1.5px solid var(--border);
+      padding: 12px 15px;
+      border: 1px solid var(--border);
       border-radius: 10px;
       font-size: 14px;
       font-family: inherit;
+      color: var(--text);
+      background: rgba(4, 6, 12, 0.7);
       outline: none;
-      transition: border 0.2s;
+      transition: all 0.22s ease;
     }
 
     .auth-input:focus {
-      border-color: var(--primary);
-      background: var(--bg);
+      border-color: var(--accent-hi);
+      background: rgba(11, 17, 36, 0.85);
+      box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.18), 0 0 22px rgba(91, 141, 239, 0.18);
     }
 
     /* ── Success Screen ──────────────────────────── */
-    .success-screen {
-      display: none;
-      text-align: center;
-    }
-
-    .success-screen.active {
-      display: block;
-    }
+    .success-screen { display: none; text-align: center; }
+    .success-screen.active { display: block; animation: heroIn 0.5s ease; }
 
     .success-icon {
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, #4338CA, #7C3AED);
-      border-radius: 16px;
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, #2447B6, #5B8DEF, #22D3EE);
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 24px;
+      box-shadow: 0 0 36px var(--accent-glow);
+      animation: brandPulse 2.4s ease-in-out infinite;
     }
 
     .success-icon svg {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       stroke: white;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,0.5));
     }
 
     .success-screen h3 {
-      font-size: 20px;
-      font-weight: 800;
+      font-size: 22px;
+      font-weight: 700;
+      color: #FFFFFF;
       margin-bottom: 8px;
     }
 
     .success-screen p {
-      color: var(--text-light);
+      color: var(--text-dim);
       margin-bottom: 28px;
     }
 
     /* ── Footer ──────────────────────────────────── */
     footer {
-      background: var(--bg);
+      position: relative;
+      background: rgba(4, 6, 12, 0.75);
       border-top: 1px solid var(--border);
-      padding: 40px 24px;
+      padding: 36px 24px;
       text-align: center;
-      color: var(--text-light);
-      font-size: 14px;
+      color: var(--text-mute);
+      font-size: 13.5px;
+      z-index: 1;
+    }
+
+    footer a {
+      color: var(--accent-hi);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover { color: var(--cyan); }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* ── Responsive ──────────────────────────────── */
     @media (max-width: 768px) {
-      .hero h1 { font-size: 36px; }
-      .section-title { font-size: 28px; }
-      .hero-cta { flex-direction: column; }
-      .btn-lg { width: 100%; }
+      .hero h1 { font-size: 38px; }
+      .section-title { font-size: 30px; }
+      .hero-cta { flex-direction: column; width: 100%; }
+      .hero-cta .btn { width: 100%; }
       .how-grid { grid-template-columns: 1fr; }
     }
   </style>
@@ -577,219 +825,215 @@
   <header>
     <div class="nav-wrapper">
       <div class="logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          <path d="M9 12l2 2 4-4"/>
-        </svg>
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
         QA Reporter
       </div>
       <div class="nav-actions">
-        <button class="btn btn-secondary">Docs</button>
-        <button class="btn btn-primary" onclick="openAuthModal()">Get Started</button>
+        <button class="btn btn-secondary" onclick="window.open('https://github.com', '_blank')">Docs</button>
+        <button class="btn btn-primary" id="ctaTop">Get Started</button>
       </div>
     </div>
   </header>
 
-  <!-- Hero Section -->
+  <!-- Hero -->
   <section class="hero">
     <div class="hero-content">
-      <h1>AI-Powered <span class="hero-highlight">Bug Reports</span></h1>
-      <p>Capture screenshots and generate comprehensive bug reports in seconds. Powered by Claude AI and built for QA teams.</p>
+      <div class="hero-eyebrow">AI Bug Reporting · Live</div>
+      <h1>Bug Reports at the<br><span class="hero-highlight">Speed of Thought</span></h1>
+      <p>Capture any screen, let Claude analyze the UI in seconds, and ship a polished, reproducible bug report straight to Jira, ClickUp or your own tracker.</p>
 
       <div class="hero-cta">
-        <button class="btn btn-primary btn-lg" onclick="openAuthModal()">
+        <button class="btn btn-primary btn-lg" id="ctaHero">
           <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/><path d="M12.5 7H11v6l5.2 3.2.8-1.3-4.5-2.7z"/>
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
           </svg>
-          Start Free Trial
+          Start Free
         </button>
-        <button class="btn btn-secondary btn-lg">Watch Demo</button>
+        <button class="btn btn-secondary btn-lg" onclick="document.getElementById('how').scrollIntoView()">How It Works</button>
       </div>
 
       <div class="hero-image">
-        <svg viewBox="0 0 800 500" style="width: 100%; height: auto; background: linear-gradient(135deg, #4338CA 0%, #7C3AED 100%); border-radius: 16px;" xmlns="http://www.w3.org/2000/svg">
-          <rect width="800" height="500" fill="url(#grad)"/>
+        <svg viewBox="0 0 800 460" style="width: 100%; height: auto; display: block;" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#4338CA;stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+            <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#0B1124"/>
+              <stop offset="100%" stop-color="#1B2A55"/>
+            </linearGradient>
+            <linearGradient id="accentGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#5B8DEF"/>
+              <stop offset="50%" stop-color="#22D3EE"/>
+              <stop offset="100%" stop-color="#C084FC"/>
             </linearGradient>
           </defs>
-          <text x="400" y="250" text-anchor="middle" fill="white" font-size="32" font-weight="bold" dy=".3em">QA Reporter Extension Preview</text>
-          <text x="400" y="290" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="16">Beautiful UI • Instant Analysis • Smart Reports</text>
+          <rect width="800" height="460" fill="url(#bg)" rx="14"/>
+          <rect x="30" y="30" width="740" height="46" fill="rgba(91,141,239,0.10)" rx="10" stroke="rgba(122,174,255,0.3)"/>
+          <circle cx="56" cy="53" r="6" fill="#F43F5E"/>
+          <circle cx="76" cy="53" r="6" fill="#FBBF24"/>
+          <circle cx="96" cy="53" r="6" fill="#34D399"/>
+          <text x="400" y="58" text-anchor="middle" fill="#94A3C8" font-size="13" font-family="monospace">qa-reporter · capture session</text>
+          <rect x="30" y="100" width="350" height="320" fill="rgba(11,17,36,0.7)" rx="10" stroke="rgba(99,130,234,0.2)"/>
+          <rect x="50" y="120" width="120" height="14" fill="url(#accentGrad)" rx="3"/>
+          <rect x="50" y="146" width="280" height="8" fill="rgba(148,163,200,0.2)" rx="2"/>
+          <rect x="50" y="162" width="220" height="8" fill="rgba(148,163,200,0.2)" rx="2"/>
+          <rect x="50" y="200" width="310" height="84" fill="rgba(91,141,239,0.08)" rx="8" stroke="rgba(122,174,255,0.3)"/>
+          <rect x="68" y="222" width="40" height="6" fill="#F43F5E" rx="2"/>
+          <text x="118" y="230" fill="#FCA5A5" font-size="11" font-family="monospace">CRITICAL · alignment</text>
+          <rect x="68" y="246" width="220" height="6" fill="rgba(148,163,200,0.3)" rx="2"/>
+          <rect x="68" y="260" width="180" height="6" fill="rgba(148,163,200,0.2)" rx="2"/>
+          <rect x="50" y="300" width="310" height="84" fill="rgba(91,141,239,0.08)" rx="8" stroke="rgba(122,174,255,0.3)"/>
+          <rect x="68" y="322" width="40" height="6" fill="#FB923C" rx="2"/>
+          <text x="118" y="330" fill="#FDBA74" font-size="11" font-family="monospace">HIGH · contrast</text>
+          <rect x="68" y="346" width="220" height="6" fill="rgba(148,163,200,0.3)" rx="2"/>
+          <rect x="68" y="360" width="180" height="6" fill="rgba(148,163,200,0.2)" rx="2"/>
+          <rect x="420" y="100" width="350" height="320" fill="rgba(11,17,36,0.7)" rx="10" stroke="rgba(99,130,234,0.2)"/>
+          <text x="445" y="135" fill="#7AAEFF" font-size="12" font-family="monospace">// AUTO-GENERATED</text>
+          <text x="445" y="160" fill="#E6EBFB" font-size="13" font-family="monospace">curl -X POST</text>
+          <text x="445" y="180" fill="#94A3C8" font-size="11" font-family="monospace">  https://api.jira.com/issues</text>
+          <text x="445" y="200" fill="#94A3C8" font-size="11" font-family="monospace">  -H "Authorization: Bearer..."</text>
+          <text x="445" y="220" fill="#94A3C8" font-size="11" font-family="monospace">  -d '{</text>
+          <text x="445" y="240" fill="#22D3EE" font-size="11" font-family="monospace">     "title": "Button misalign"</text>
+          <text x="445" y="260" fill="#22D3EE" font-size="11" font-family="monospace">     "severity": "Critical"</text>
+          <text x="445" y="280" fill="#22D3EE" font-size="11" font-family="monospace">     "steps": [...]</text>
+          <text x="445" y="300" fill="#94A3C8" font-size="11" font-family="monospace">  }'</text>
+          <rect x="445" y="340" width="100" height="32" fill="url(#accentGrad)" rx="8"/>
+          <text x="495" y="361" text-anchor="middle" fill="#FFFFFF" font-size="12" font-weight="bold">SHIP IT</text>
         </svg>
       </div>
     </div>
   </section>
 
-  <!-- Features Section -->
+  <!-- Features -->
   <section class="features">
-    <div class="section-header">
+    <div class="section-header reveal">
       <div class="section-label">Features</div>
       <h2 class="section-title">Everything You Need</h2>
-      <p class="section-desc">Streamline your QA workflow with intelligent automation and beautiful reports</p>
+      <p class="section-desc">A polished, end-to-end pipeline from screenshot to shipped ticket.</p>
     </div>
 
     <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
-          </svg>
-        </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
         <h3>One-Click Capture</h3>
-        <p>Screenshot any webpage instantly and analyze UI issues with AI in seconds</p>
+        <p>Screenshot any page from the browser toolbar — no flow disruption, no context switching.</p>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-        </div>
-        <h3>AI Analysis</h3>
-        <p>Claude AI detects alignment, spacing, contrast, and styling issues automatically</p>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <h3>AI Visual Analysis</h3>
+        <p>Claude inspects alignment, contrast, spacing, typography and accessibility — like a senior designer.</p>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-          </svg>
-        </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
         <h3>Smart Reports</h3>
-        <p>Generate professional bug reports with reproduction steps and severity levels</p>
+        <p>Repro steps, severity, expected/actual behavior, environment — written and ready to ship.</p>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-          </svg>
-        </div>
-        <h3>Integrations</h3>
-        <p>Connect to Jira, ClickUp, or custom APIs to submit bugs directly</p>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+        <h3>Tracker Integrations</h3>
+        <p>Generated CURL / Python / JavaScript snippets for Jira, ClickUp and any custom API endpoint.</p>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 11H5m14 0a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2m14 0V9a2 2 0 0 0-2-2M5 11V9m14 0a2 2 0 0 0-2-2m-6 16h6v-8H7v8z"/>
-          </svg>
-        </div>
-        <h3>Server Mode</h3>
-        <p>Deploy your own backend or use our cloud service without API keys</p>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h12M6 16h6"/></svg></div>
+        <h3>Self-Hosted Backend</h3>
+        <p>Bring your own server. Screenshots and Claude keys never leave your infrastructure.</p>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          </svg>
-        </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <h3>Privacy First</h3>
-        <p>Screenshots stay private. Optional server mode keeps data on your infrastructure</p>
+        <p>No telemetry, no data hoarding. Demo mode runs entirely without keys for safe trial use.</p>
       </div>
     </div>
   </section>
 
   <!-- How It Works -->
-  <section class="how-it-works">
+  <section class="how-it-works" id="how">
     <div class="how-content">
-      <div class="section-header" style="color: white;">
-        <div class="section-label" style="color: rgba(255,255,255,0.7);">Process</div>
-        <h2 class="section-title" style="color: white;">How It Works</h2>
+      <div class="section-header reveal">
+        <div class="section-label">Process</div>
+        <h2 class="section-title">How It Works</h2>
       </div>
 
       <div class="how-grid">
-        <div class="step">
-          <div class="step-number">1</div>
-          <h3>Sign In with Gmail</h3>
-          <p>Quick login with your Google account, no passwords to remember</p>
+        <div class="step reveal">
+          <div class="step-number">01</div>
+          <h3>Install</h3>
+          <p>Drop the extension into Chrome. Setup takes about thirty seconds.</p>
         </div>
-        <div class="step">
-          <div class="step-number">2</div>
-          <h3>Add to Chrome</h3>
-          <p>Install the extension with one click to start using immediately</p>
+        <div class="step reveal">
+          <div class="step-number">02</div>
+          <h3>Capture</h3>
+          <p>Pin the icon and screenshot any tab. Demo mode works without an API key.</p>
         </div>
-        <div class="step">
-          <div class="step-number">3</div>
-          <h3>Capture & Analyze</h3>
-          <p>Click the extension icon and screenshot any webpage for instant AI analysis</p>
+        <div class="step reveal">
+          <div class="step-number">03</div>
+          <h3>Analyze</h3>
+          <p>The AI reviews the image, finds issues, and ranks them by severity.</p>
         </div>
-        <div class="step">
-          <div class="step-number">4</div>
-          <h3>Generate & Share</h3>
-          <p>Get professional bug reports and share directly with your team or tracker</p>
+        <div class="step reveal">
+          <div class="step-number">04</div>
+          <h3>Ship</h3>
+          <p>Copy the formatted report or send it straight to your tracker via CURL.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA/Pricing -->
+  <!-- CTA / Pricing -->
   <section class="cta-section">
-    <div class="section-header">
+    <div class="section-header reveal">
       <div class="section-label">Pricing</div>
       <h2 class="section-title">Free to Start</h2>
-      <p class="section-desc">No credit card required. Upgrade anytime for advanced features</p>
+      <p class="section-desc">No credit card. Bring your own Claude API key, your own backend, or just use demo mode.</p>
     </div>
 
-    <div class="pricing-card">
-      <h3 style="font-size: 24px; font-weight: 800;">Free Tier</h3>
-      <div class="price-label">Everything you need to get started</div>
+    <div class="pricing-card reveal">
+      <h3>Open Source Tier</h3>
       <div class="price">$0</div>
-      <div class="price-label" style="margin-bottom: 0;">Forever free</div>
+      <div class="price-label">Forever free · self-hosted</div>
 
       <div class="price-features">
-        <div class="price-feature">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>Unlimited screenshots</span>
-        </div>
-        <div class="price-feature">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>AI-powered analysis</span>
-        </div>
-        <div class="price-feature">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>Report generation</span>
-        </div>
-        <div class="price-feature">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>Team collaboration</span>
-        </div>
-        <div class="price-feature">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>Browser integrations</span>
-        </div>
+        <div class="price-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Unlimited screenshots</span></div>
+        <div class="price-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Claude-powered AI analysis</span></div>
+        <div class="price-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Professional report generation</span></div>
+        <div class="price-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Jira, ClickUp & custom API snippets</span></div>
+        <div class="price-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Self-hostable demo mode</span></div>
       </div>
 
-      <button class="btn btn-primary btn-lg" onclick="openAuthModal()" style="margin-top: 32px; width: 100%;">Get Started Free</button>
+      <button class="btn btn-primary btn-lg" id="ctaBottom" style="margin-top: 30px; width: 100%;">Get Started Free</button>
     </div>
   </section>
 
   <!-- Footer -->
   <footer>
-    <p>&copy; 2024 QA Reporter. Built for QA teams. | <a href="#" style="color: var(--primary); text-decoration: none;">Privacy</a> • <a href="#" style="color: var(--primary); text-decoration: none;">Terms</a></p>
+    <p>&copy; 2026 QA Reporter · Built for QA teams · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
   </footer>
 
   <!-- Auth Modal -->
   <div class="modal-backdrop" id="authModal">
     <div class="modal">
-      <button class="modal-close" onclick="closeAuthModal()">×</button>
+      <button class="modal-close" id="closeBtn">×</button>
 
-      <!-- Login Form -->
       <div id="loginScreen">
         <div class="modal-header">
           <h2>Welcome</h2>
           <p>Sign in to get started with QA Reporter</p>
         </div>
 
-        <button class="auth-option" onclick="gmailLogin()">
+        <button class="auth-option" id="googleBtn">
           <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
           Continue with Google
         </button>
@@ -798,24 +1042,21 @@
 
         <div class="auth-form">
           <input type="email" class="auth-input" placeholder="Enter your email" id="emailInput">
-          <button class="btn btn-primary" style="width: 100%; padding: 11px;" onclick="emailLogin()">Continue with Email</button>
+          <button class="btn btn-primary" style="width: 100%; padding: 12px;" id="emailBtn">Continue with Email</button>
         </div>
 
-        <p style="font-size: 12px; color: var(--text-light); margin-top: 20px; line-height: 1.6;">
-          By signing in, you agree to our Terms of Service and Privacy Policy
+        <p style="font-size: 12px; color: var(--text-mute); margin-top: 22px; line-height: 1.6; text-align: center;">
+          By signing in, you agree to our <a href="#" style="color: var(--accent-hi);">Terms of Service</a> and <a href="#" style="color: var(--accent-hi);">Privacy Policy</a>
         </p>
       </div>
 
-      <!-- Success Screen -->
       <div id="successScreen" class="success-screen">
         <div class="success-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         <h3>Welcome to QA Reporter!</h3>
         <p>Your account has been created successfully</p>
-        <button class="btn btn-primary" style="width: 100%; padding: 11px;" onclick="addExtensionToChrome()">
+        <button class="btn btn-primary" style="width: 100%; padding: 12px;" id="addExtBtn">
           <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
           </svg>
@@ -826,56 +1067,56 @@
   </div>
 
   <script>
+    const authModal = document.getElementById('authModal');
+
     function openAuthModal() {
-      document.getElementById('authModal').classList.add('active');
+      authModal.classList.add('active');
       document.getElementById('loginScreen').style.display = 'block';
       document.getElementById('successScreen').classList.remove('active');
     }
 
-    function closeAuthModal() {
-      document.getElementById('authModal').classList.remove('active');
-    }
+    function closeAuthModal() { authModal.classList.remove('active'); }
 
-    function gmailLogin() {
-      // In production, this would use Google OAuth 2.0
-      // For demo, we'll show success after a brief delay
-      console.log('Gmail login initiated');
+    document.getElementById('ctaTop').addEventListener('click', openAuthModal);
+    document.getElementById('ctaHero').addEventListener('click', openAuthModal);
+    document.getElementById('ctaBottom').addEventListener('click', openAuthModal);
+    document.getElementById('closeBtn').addEventListener('click', closeAuthModal);
+
+    document.getElementById('googleBtn').addEventListener('click', () => {
       setTimeout(() => {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('successScreen').classList.add('active');
-      }, 1000);
-    }
+      }, 800);
+    });
 
-    function emailLogin() {
+    document.getElementById('emailBtn').addEventListener('click', () => {
       const email = document.getElementById('emailInput').value;
-      if (!email || !email.includes('@')) {
-        alert('Please enter a valid email');
-        return;
-      }
-      // In production, send to backend
-      console.log('Email login:', email);
+      if (!email || !email.includes('@')) { alert('Please enter a valid email'); return; }
       setTimeout(() => {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('successScreen').classList.add('active');
-      }, 1000);
-    }
+      }, 800);
+    });
 
-    function addExtensionToChrome() {
-      // In production, this would link to your Chrome Web Store listing
-      // https://chrome.google.com/webstore/detail/YOUR_EXTENSION_ID
-      alert('Redirecting to Chrome Web Store...\n\nIn production, this would open:\nhttps://chrome.google.com/webstore/detail/qa-reporter');
+    document.getElementById('addExtBtn').addEventListener('click', () => {
       window.open('https://chrome.google.com/webstore', '_blank');
-    }
-
-    // Close modal on backdrop click
-    document.getElementById('authModal').addEventListener('click', (e) => {
-      if (e.target.id === 'authModal') closeAuthModal();
     });
 
-    // Enter key to login
-    document.getElementById('emailInput').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') emailLogin();
-    });
+    authModal.addEventListener('click', (e) => { if (e.target.id === 'authModal') closeAuthModal(); });
+    document.getElementById('emailInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('emailBtn').click(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAuthModal(); });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </script>
 </body>
 </html>

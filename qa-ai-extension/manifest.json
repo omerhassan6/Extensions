@@ -1,21 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "QA UI Analyzer & Bug Reporter",
-  "version": "1.0.0",
-  "description": "Capture screenshots and auto-generate bug reports with UI analysis",
+  "name": "QA Reporter — AI Bug Analysis & Recording",
+  "version": "1.1.0",
+  "description": "Capture screenshots or record full flows, let AI detect UI issues, and ship polished bug reports with CURL ready to send.",
   "permissions": [
     "scripting",
     "activeTab",
     "storage",
     "tabs",
-    "clipboardWrite"
+    "tabCapture",
+    "offscreen",
+    "downloads",
+    "clipboardWrite",
+    "contextMenus",
+    "notifications"
   ],
   "host_permissions": [
     "<all_urls>"
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "QA Analyzer"
+    "default_title": "QA Reporter"
   },
   "background": {
     "service_worker": "background.js"
@@ -25,7 +30,13 @@
     {
       "matches": ["<all_urls>"],
       "js": ["content-script.js"],
-      "run_at": "document_start"
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["offscreen.html"],
+      "matches": ["<all_urls>"]
     }
   ]
 }

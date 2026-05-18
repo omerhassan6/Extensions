@@ -1,27 +1,25 @@
 const analysisService = require('../services/analysis')
 const { validateApiKey } = require('../utils/auth')
 
-// Analyze screenshot for UI issues
 exports.analyzeScreenshot = async (req, res, next) => {
   try {
-    const { screenshot, pageUrl, apiKey } = req.body
+    const { screenshot, pageUrl, metadata, apiKey } = req.body
 
     if (!screenshot) {
       return res.status(400).json({ error: 'Screenshot is required' })
     }
 
-    // Validate API key if required
-    if (process.env.REQUIRE_AUTH === 'true') {
-      if (!validateApiKey(apiKey)) {
-        return res.status(401).json({ error: 'Invalid API key' })
-      }
+    if (process.env.REQUIRE_AUTH === 'true' && !validateApiKey(apiKey)) {
+      return res.status(401).json({ error: 'Invalid API key' })
     }
 
-    const issues = await analysisService.analyzeScreenshot(screenshot, pageUrl)
+    const url = pageUrl || (metadata && (metadata.url || metadata.pageUrl)) || ''
+    const issues = await analysisService.analyzeScreenshot(screenshot, url)
 
     res.json({
       success: true,
-      issues: issues,
+      issues,
+      demoMode: process.env.DEMO_MODE === 'true' || !process.env.CLAUDE_API_KEY,
       timestamp: new Date().toISOString()
     })
   } catch (error) {

@@ -8,7 +8,7 @@
 
 <div class="app">
 
-  <!-- Header -->
+  <!-- ───────── Header ───────── -->
   <header class="app-header">
     <div class="brand">
       <div class="brand-icon-wrap">
@@ -18,7 +18,7 @@
         </svg>
       </div>
       <div>
-        <div class="brand-name">QA Reporter</div>
+        <div class="brand-name">QA Reporter <span class="mode-chip demo" id="modeChip">DEMO</span></div>
         <div class="brand-sub">AI Bug Analysis</div>
       </div>
     </div>
@@ -30,8 +30,53 @@
     </button>
   </header>
 
-  <!-- Tab Navigation -->
-  <nav class="tab-nav">
+  <!-- ───────── Connect screen (shown first run) ───────── -->
+  <section id="connectScreen" class="screen" style="display:none">
+    <div class="connect-hero">
+      <div class="connect-glow"></div>
+      <h2 class="connect-title">Connect Your AI Backend</h2>
+      <p class="connect-sub">Choose how QA Reporter generates bug reports.</p>
+    </div>
+
+    <div class="connect-cards">
+
+      <button class="connect-card" data-mode="server">
+        <div class="connect-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <div class="connect-card-body">
+          <div class="connect-card-title">Connect to Server <span class="recommended">Recommended</span></div>
+          <div class="connect-card-desc">Use your QA Reporter backend. Best for teams.</div>
+          <input type="text" id="connectServerUrl" placeholder="http://localhost:3000/api" autocomplete="off">
+          <div class="connect-row">
+            <button class="btn btn-outline btn-sm" id="connectTestBtn">Test Connection</button>
+            <div class="connect-test-status" id="connectTestStatus"></div>
+          </div>
+        </div>
+      </button>
+
+      <button class="connect-card" data-mode="api">
+        <div class="connect-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
+        <div class="connect-card-body">
+          <div class="connect-card-title">Bring your Claude key</div>
+          <div class="connect-card-desc">Direct API mode. Stays in browser.</div>
+          <input type="password" id="connectApiKey" placeholder="sk-ant-…" autocomplete="off">
+        </div>
+      </button>
+
+      <button class="connect-card" data-mode="demo">
+        <div class="connect-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        <div class="connect-card-body">
+          <div class="connect-card-title">Try Demo Mode</div>
+          <div class="connect-card-desc">No setup. Uses canned analysis data to try the flow.</div>
+        </div>
+      </button>
+
+    </div>
+
+    <button class="btn btn-primary" id="connectFinishBtn">Continue</button>
+  </section>
+
+  <!-- ───────── Tab navigation ───────── -->
+  <nav class="tab-nav" id="tabNav">
     <button class="tab-btn active" data-tab="capture">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
@@ -39,13 +84,20 @@
       </svg>
       Capture
     </button>
+    <button class="tab-btn" data-tab="record">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="9"/>
+        <circle cx="12" cy="12" r="4" fill="currentColor"/>
+      </svg>
+      Record
+    </button>
     <button class="tab-btn" data-tab="manual">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
         <polyline points="17 8 12 3 7 8"/>
         <line x1="12" y1="3" x2="12" y2="15"/>
       </svg>
-      Manual
+      Upload
     </button>
     <button class="tab-btn" data-tab="history">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -56,14 +108,13 @@
     </button>
   </nav>
 
-  <!-- Tab Body -->
   <div class="tab-body">
 
-    <!-- Tab 1: Capture & Analyze -->
+    <!-- ───── Tab 1: Capture (screenshot) ───── -->
     <div id="capture" class="tab-content active">
       <div id="captureStatus" class="status"></div>
 
-      <button id="captureBtn" class="btn btn-primary">
+      <button id="captureBtn" class="btn btn-primary btn-lg">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
           <circle cx="12" cy="13" r="4"/>
@@ -87,14 +138,61 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
         </svg>
         Generate Bug Report
       </button>
     </div>
 
-    <!-- Tab 2: Manual Report -->
+    <!-- ───── Tab 2: Record video ───── -->
+    <div id="record" class="tab-content" style="display:none">
+      <div id="recordStatus" class="status"></div>
+
+      <div class="record-hero" id="recordIdle">
+        <div class="record-pulse"></div>
+        <div class="record-hero-title">Record &amp; Reproduce</div>
+        <div class="record-hero-sub">
+          Captures the tab as video while logging clicks, inputs and console errors.
+          Stops by itself when you tab back here.
+        </div>
+        <button id="recordStartBtn" class="btn btn-primary btn-lg">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
+          Start Recording
+        </button>
+      </div>
+
+      <div class="record-active" id="recordActive" style="display:none">
+        <div class="record-live-dot"></div>
+        <div class="record-active-info">
+          <div class="record-active-title">Recording…</div>
+          <div class="record-active-time" id="recordTimer">00:00</div>
+          <div class="record-active-flow"><span id="recordFlowCount">0</span> step(s) captured</div>
+        </div>
+        <button id="recordStopBtn" class="btn btn-danger btn-lg">
+          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+          Stop &amp; Analyze
+        </button>
+      </div>
+
+      <div class="record-result" id="recordResult" style="display:none">
+        <video id="recordPlayback" controls class="preview-canvas"></video>
+        <div class="record-meta" id="recordMeta"></div>
+        <div id="recordAnalysis" class="result-box" style="display:none"></div>
+        <button id="recordAnalyzeBtn" class="btn btn-outline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Analyze Recording
+        </button>
+        <button id="recordReportBtn" class="btn btn-success" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Generate Bug Report
+        </button>
+        <button id="recordDownloadBtn" class="btn btn-ghost btn-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Save .webm
+        </button>
+      </div>
+    </div>
+
+    <!-- ───── Tab 3: Manual upload ───── -->
     <div id="manual" class="tab-content" style="display:none">
       <div id="manualStatus" class="status"></div>
 
@@ -125,14 +223,12 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
         </svg>
         Generate Report
       </button>
     </div>
 
-    <!-- Tab 3: History -->
+    <!-- ───── Tab 4: History ───── -->
     <div id="history" class="tab-content" style="display:none">
       <div id="reportHistory" class="history-list"></div>
       <button id="clearHistoryBtn" class="btn btn-danger">
@@ -147,14 +243,61 @@
   </div>
 </div>
 
-<!-- Report Modal -->
+<!-- ───────── Report Modal ───────── -->
 <div id="reportModal" class="modal-backdrop" style="display:none">
-  <div class="modal">
+  <div class="modal modal-report">
     <div class="modal-header">
-      <h3 class="modal-title">Generated Bug Report</h3>
+      <h3 class="modal-title" id="reportTitle">Generated Bug Report</h3>
       <button class="close modal-close-btn">&times;</button>
     </div>
-    <div id="reportContent" class="report-content"></div>
+
+    <div class="report-body">
+
+      <div class="report-title-row">
+        <div class="report-title-text" id="rTitle">—</div>
+        <span class="severity-badge" id="rSeverity">—</span>
+      </div>
+
+      <img id="rScreenshot" class="report-screenshot" alt="screenshot" style="display:none">
+      <video id="rVideo" class="report-screenshot" controls style="display:none"></video>
+
+      <div class="report-section">
+        <div class="report-section-label">What's going wrong</div>
+        <div id="rIssues" class="result-box"></div>
+      </div>
+
+      <div class="report-section">
+        <div class="report-section-label">Description</div>
+        <div class="report-text" id="rDescription"></div>
+      </div>
+
+      <div class="report-section">
+        <div class="report-section-label">Expected behavior</div>
+        <div class="report-text" id="rExpected"></div>
+      </div>
+
+      <div class="report-section">
+        <div class="report-section-label">Actual behavior</div>
+        <div class="report-text" id="rActual"></div>
+      </div>
+
+      <div class="report-section">
+        <div class="report-section-label">Reproduction steps</div>
+        <ol class="report-steps" id="rSteps"></ol>
+      </div>
+
+      <div class="report-section">
+        <div class="report-section-label">Environment</div>
+        <div class="report-env" id="rEnv"></div>
+      </div>
+
+      <div class="report-section">
+        <div class="report-section-label">CURL (ready to send)</div>
+        <pre class="report-code" id="rCurl"></pre>
+      </div>
+
+    </div>
+
     <div class="modal-actions">
       <button id="copyReportBtn" class="btn btn-ghost btn-sm">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

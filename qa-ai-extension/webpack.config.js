@@ -7,7 +7,8 @@ module.exports = {
     popup: './src/popup.js',
     options: './src/options.js',
     background: './src/background.js',
-    'content-script': './src/content-script.js'
+    'content-script': './src/content-script.js',
+    offscreen: './src/offscreen.js'
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -17,9 +18,10 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: 'manifest.json', to: '.' },
-        { from: 'src/popup.html', to: 'popup.html' },
-        { from: 'src/options.html', to: 'options.html' },
-        { from: 'src/popup.css', to: 'popup.css' },
+        { from: 'src/popup.html',     to: 'popup.html' },
+        { from: 'src/options.html',   to: 'options.html' },
+        { from: 'src/offscreen.html', to: 'offscreen.html' },
+        { from: 'src/popup.css',      to: 'popup.css' },
         { from: 'src/screenshot-handler.js', to: 'screenshot-handler.js' },
         { from: 'services/**/*', to: '.' }
       ]
