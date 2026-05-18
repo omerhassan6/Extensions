@@ -34,6 +34,7 @@
 
 html, body {
   width: 400px;
+  min-width: 320px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--text);
   font-size: 13px;
@@ -41,6 +42,14 @@ html, body {
   letter-spacing: 0.1px;
   background: var(--bg-0);
   overflow-x: hidden;
+  overflow-wrap: anywhere;
+}
+
+/* When the popup is opened as a tab (popup.html in a window), make it
+   stretch responsively and stop pinning at 400px. */
+@media (min-width: 600px) {
+  html, body { width: 100%; max-width: 100%; }
+  .app { max-width: 720px; margin: 0 auto; }
 }
 
 body {
@@ -92,6 +101,7 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
   background:
     linear-gradient(180deg, rgba(11, 17, 36, 0.95), rgba(7, 11, 22, 0.6)),
     linear-gradient(135deg, rgba(91, 141, 239, 0.18), rgba(124, 58, 237, 0.10) 50%, rgba(34, 211, 238, 0.10));
@@ -118,6 +128,17 @@ body::before {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.brand > div { min-width: 0; }
+
+.brand-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .brand-icon-wrap {
@@ -215,21 +236,25 @@ body::before {
 
 .tab-btn {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  padding: 11px 6px 10px;
+  padding: 11px 4px 10px;
   border: none;
   background: none;
   cursor: pointer;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--text-mute);
   position: relative;
   transition: color 0.2s ease;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tab-btn svg {
@@ -622,6 +647,7 @@ body::before {
   justify-content: space-between;
   gap: 8px;
   margin-bottom: 6px;
+  flex-wrap: wrap;
 }
 
 .issue-title {
@@ -630,6 +656,8 @@ body::before {
   color: var(--text);
   line-height: 1.4;
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .severity-badge {
@@ -727,7 +755,7 @@ body::before {
   box-shadow: 0 4px 18px rgba(0,0,0,0.35);
 }
 
-.history-item-info { flex: 1; min-width: 0; }
+.history-item-info { flex: 1; min-width: 0; overflow: hidden; }
 
 .history-item-title {
   font-size: 12px;
@@ -840,6 +868,9 @@ body::before {
 .modal {
   width: 100%;
   max-width: 580px;
+  max-height: calc(100vh - 32px);
+  display: flex;
+  flex-direction: column;
   background:
     linear-gradient(180deg, rgba(15, 23, 50, 0.98), rgba(7, 11, 22, 0.98));
   border: 1px solid var(--border-hi);
@@ -935,11 +966,13 @@ body::before {
   gap: 8px;
   padding: 14px 20px;
   background: rgba(7, 11, 22, 0.55);
+  flex-wrap: wrap;
 }
 
 .modal-actions .btn {
   margin-top: 0;
-  flex: 1;
+  flex: 1 1 120px;
+  min-width: 0;
 }
 
 /* ── Mode badge ──────────────────────────────────── */
@@ -967,9 +1000,18 @@ body::before {
 .screen {
   position: relative;
   z-index: 1;
-  padding: 20px 16px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 18px 16px 26px;
   animation: tabIn 0.36s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* When inside .screen, neutralize the global .btn margin so the
+   flex gap is the only spacing rule — prevents collision with cards. */
+.screen > .btn { margin-top: 0; }
+.screen > .connect-cards { margin: 0; }
+.screen > .connect-hero  { padding-bottom: 2px; }
 
 .btn-lg { padding: 13px 18px; font-size: 13.5px; }
 
@@ -1048,7 +1090,7 @@ body::before {
   border-color: transparent;
   transform: translateY(-1px);
   background: linear-gradient(135deg, rgba(30, 45, 90, 0.85), rgba(15, 24, 50, 0.92));
-  box-shadow: 0 6px 22px rgba(0,0,0,0.4), 0 0 18px rgba(91, 141, 239, 0.16);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 0 12px rgba(91, 141, 239, 0.14);
 }
 
 .connect-card.selected::before,
@@ -1070,7 +1112,16 @@ body::before {
 
 .connect-card-icon svg { width: 18px; height: 18px; }
 
-.connect-card-body { flex: 1; min-width: 0; }
+.connect-card-body {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.connect-card input {
+  min-width: 0;
+  display: block;
+}
 
 .connect-card-title {
   font-size: 13px;
@@ -1125,17 +1176,21 @@ body::before {
   gap: 10px;
   margin-top: 8px;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
-.connect-row .btn { width: auto; margin-top: 0; }
+.connect-row .btn { width: auto; margin-top: 0; flex-shrink: 0; }
 
 .connect-test-status {
-  font-size: 11px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
+.connect-test-status.empty,
+.connect-test-status:empty { display: none; }
 
 .connect-test-status.success { color: var(--low); }
 .connect-test-status.error   { color: #FCA5A5; }
@@ -1257,7 +1312,7 @@ body::before {
 .record-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px 14px;
   font-size: 11px;
   color: var(--text-dim);
   padding: 8px 12px;
@@ -1265,6 +1320,8 @@ body::before {
   border: 1px solid var(--border);
   border-radius: 9px;
 }
+
+.record-meta > div { white-space: nowrap; }
 
 .record-meta span { color: var(--text); font-weight: 600; }
 
@@ -1274,7 +1331,8 @@ body::before {
 
 .report-body {
   padding: 16px 20px 6px;
-  max-height: 460px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   background: rgba(4, 6, 12, 0.45);
   border-bottom: 1px solid var(--border);
@@ -1292,6 +1350,7 @@ body::before {
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .report-title-text {
@@ -1300,6 +1359,8 @@ body::before {
   color: #FFFFFF;
   line-height: 1.35;
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .report-screenshot {
@@ -1352,13 +1413,27 @@ body::before {
 
 .report-env {
   display: grid;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: max-content minmax(0, 1fr);
   gap: 4px 10px;
   font-size: 11.5px;
   color: var(--text-dim);
 }
 
-.report-env .k { color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.6px; font-size: 10px; align-self: center; }
+.report-env > span { min-width: 0; overflow-wrap: anywhere; }
+
+.report-env .k {
+  color: var(--text-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-size: 10px;
+  align-self: center;
+  white-space: nowrap;
+}
+
+@media (max-width: 380px) {
+  .report-env { grid-template-columns: 1fr; gap: 2px; }
+  .report-env .k { margin-top: 6px; }
+}
 
 .report-code {
   font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
@@ -1372,7 +1447,8 @@ body::before {
   max-height: 180px;
   overflow: auto;
   white-space: pre-wrap;
-  word-break: break-all;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .report-code::-webkit-scrollbar { width: 4px; height: 4px; }

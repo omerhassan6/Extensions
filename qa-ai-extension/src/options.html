@@ -34,6 +34,7 @@
       min-height: 100vh;
       background: var(--bg-0);
       overflow-x: hidden;
+      overflow-wrap: anywhere;
     }
 
     body {
@@ -73,6 +74,7 @@
       display: flex;
       align-items: center;
       gap: 14px;
+      flex-wrap: wrap;
       background:
         linear-gradient(180deg, rgba(11, 17, 36, 0.95), rgba(7, 11, 22, 0.5)),
         linear-gradient(135deg, rgba(91, 141, 239, 0.18), rgba(124, 58, 237, 0.10) 50%, rgba(34, 211, 238, 0.10));
@@ -143,14 +145,17 @@
     .page-main {
       position: relative;
       max-width: 620px;
+      width: 100%;
       margin: 32px auto;
-      padding: 0 24px 56px;
+      padding: 0 16px 56px;
       display: flex;
       flex-direction: column;
       gap: 14px;
       z-index: 1;
       animation: pageIn 0.55s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
+    @media (min-width: 560px) { .page-main { padding: 0 24px 56px; } }
 
     @keyframes pageIn {
       from { opacity: 0; transform: translateY(12px); filter: blur(4px); }
@@ -486,6 +491,37 @@
       align-items: center;
       justify-content: space-between;
       gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .toggle-row > div:first-child { min-width: 0; flex: 1; }
+
+    /* Range row */
+    .range-row { flex-wrap: wrap; }
+
+    /* Footer actions — make Save button + status wrap nicely */
+    .actions {
+      align-items: stretch;
+    }
+
+    .btn-save {
+      flex: 1 1 auto;
+      min-width: 140px;
+    }
+
+    .status-msg {
+      flex: 1 1 200px;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .field {
+      min-width: 0;
+    }
+
+    .field input,
+    .field select {
+      max-width: 100%;
     }
 
     .hidden { display: none !important; }
