@@ -4,9 +4,115 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QA AI Assistant - Settings</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f5f7;
+      color: #1f2937;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #ffffff;
+      color: #111827;
+    }
+
+    .helper-text {
+      margin-top: 6px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    button {
+      padding: 10px 18px;
+      background: #2563eb;
+      border: none;
+      border-radius: 8px;
+      color: #ffffff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 14px;
+      font-size: 13px;
+    }
+
+    .message.success {
+      color: #065f46;
+    }
+
+    .message.error {
+      color: #b91c1c;
+    }
+  </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="module" src="options.tsx"></script>
+  <h1>QA AI Assistant Settings</h1>
+
+  <div class="form-group">
+    <label for="userUrlHeaderName">User URL header name</label>
+    <input id="userUrlHeaderName" type="text" placeholder="x-user-url" />
+    <div class="helper-text">The response header name used to capture the user URL.</div>
+  </div>
+
+  <div class="form-group">
+    <label for="cookieTokenApp">Token extraction application</label>
+    <select id="cookieTokenApp">
+      <option value="none">None</option>
+      <option value="applicationA">Application A</option>
+      <option value="applicationB">Application B</option>
+      <option value="custom">Custom cookie name</option>
+    </select>
+    <div class="helper-text">Choose the application whose cookie token should be extracted automatically.</div>
+  </div>
+
+  <div class="form-group" id="customCookieGroup" style="display:none;">
+    <label for="customCookieName">Custom cookie name</label>
+    <input id="customCookieName" type="text" placeholder="auth_token" />
+    <div class="helper-text">Enter the cookie name to extract when using the Custom option.</div>
+  </div>
+
+  <div class="actions">
+    <button id="saveBtn">Save settings</button>
+  </div>
+
+  <div class="message" id="message"></div>
+
+  <script src="options.js"></script>
 </body>
 </html>

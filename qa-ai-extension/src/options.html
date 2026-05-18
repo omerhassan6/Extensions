@@ -65,7 +65,6 @@
       gap: 12px;
     }
 
-    /* Section label */
     .section-label {
       font-size: 11px;
       font-weight: 700;
@@ -76,7 +75,6 @@
       margin-top: 8px;
     }
 
-    /* Card */
     .card {
       background: #ffffff;
       border: 1px solid #E2E8F0;
@@ -133,6 +131,69 @@
 
     .field input::placeholder { color: #CBD5E1; }
 
+    /* Toggle Switch */
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background: #E2E8F0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle-switch.active { background: #4F46E5; }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: #ffffff;
+      border-radius: 10px;
+      top: 2px;
+      left: 2px;
+      transition: left 0.2s;
+    }
+
+    .toggle-switch.active::after { left: 22px; }
+
+    .toggle-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #64748B;
+    }
+
+    /* Info badge */
+    .info-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 6px 10px;
+      background: #EEF2FF;
+      border: 1px solid #C7D2FE;
+      border-radius: 6px;
+      color: #4338CA;
+      font-weight: 500;
+      margin-top: 8px;
+    }
+
+    .info-badge svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    .hidden { display: none !important; }
+
     /* Range slider */
     .range-row {
       display: flex;
@@ -181,6 +242,7 @@
       align-items: center;
       gap: 12px;
       margin-top: 4px;
+      flex-wrap: wrap;
     }
 
     .btn-save {
@@ -205,26 +267,67 @@
 
     .btn-save:active { transform: translateY(0); }
 
+    .btn-test {
+      padding: 8px 16px;
+      background: #F1F5F9;
+      color: #475569;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.13s;
+    }
+
+    .btn-test:hover { background: #E2E8F0; }
+
     .status-msg {
       font-size: 13px;
       font-weight: 500;
       padding: 8px 14px;
       border-radius: 8px;
       display: none;
+      min-width: 180px;
     }
 
     .status-msg.success {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       background: #ECFDF5;
       color: #065F46;
       border: 1px solid #A7F3D0;
     }
 
     .status-msg.error {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       background: #FEF2F2;
       color: #991B1B;
       border: 1px solid #FECACA;
+    }
+
+    .status-msg.loading {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #EEF2FF;
+      color: #4338CA;
+      border: 1px solid #C7D2FE;
+    }
+
+    .spinner {
+      width: 12px;
+      height: 12px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.55s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -245,15 +348,47 @@
 
   <main class="page-main">
 
-    <div class="section-label">AI Configuration</div>
+    <!-- Server Mode Section -->
+    <div class="section-label">Operation Mode</div>
+    <div class="card">
+      <div class="field">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div class="field-label">Backend Server Mode</div>
+            <div class="field-desc">Use your server for AI analysis (recommended)</div>
+          </div>
+          <div class="toggle-switch" id="serverModeToggle"></div>
+        </div>
+        <div class="info-badge" id="modeBadge">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          <span id="modeText">Using demo mode</span>
+        </div>
+      </div>
+      <div class="field" id="serverUrlField" style="display: none;">
+        <div class="field-label">Server URL</div>
+        <div class="field-desc">Base URL of your QA Reporter backend</div>
+        <input type="text" id="serverUrl" placeholder="https://your-server.com/api">
+        <button class="btn-test" id="testServerBtn" style="margin-top: 8px; width: auto;">Test Connection</button>
+        <div class="status-msg" id="testStatus" style="margin-top: 8px;"></div>
+      </div>
+      <div class="field" id="serverKeyField" style="display: none;">
+        <div class="field-label">Server API Key</div>
+        <div class="field-desc">Optional: authentication key for your server</div>
+        <input type="password" id="serverKey" placeholder="sk-…">
+      </div>
+    </div>
+
+    <!-- Direct API Mode Section -->
+    <div class="section-label">Direct API (Optional)</div>
     <div class="card">
       <div class="field">
         <div class="field-label">Claude API Key</div>
-        <div class="field-desc">Used for AI-powered UI analysis via Anthropic's Claude</div>
+        <div class="field-desc">Leave empty to use server mode</div>
         <input type="password" id="apiKey" placeholder="sk-ant-…">
       </div>
     </div>
 
+    <!-- Bug Tracker Integration -->
     <div class="section-label">Bug Tracker Integration</div>
     <div class="card">
       <div class="field">
@@ -268,6 +403,7 @@
       </div>
     </div>
 
+    <!-- Report Defaults -->
     <div class="section-label">Report Defaults</div>
     <div class="card">
       <div class="field">
@@ -290,6 +426,7 @@
       </div>
     </div>
 
+    <!-- Actions -->
     <div class="actions">
       <button class="btn-save" id="saveBtn">Save Settings</button>
       <div class="status-msg" id="statusMessage"></div>
@@ -298,16 +435,67 @@
   </main>
 
   <script>
-    // Live quality display
+    const serverModeToggle = document.getElementById('serverModeToggle');
+    const serverUrlField = document.getElementById('serverUrlField');
+    const serverKeyField = document.getElementById('serverKeyField');
+    const modeText = document.getElementById('modeText');
     const qualitySlider = document.getElementById('screenshotQuality');
     const qualityDisplay = document.getElementById('qualityDisplay');
+    const testServerBtn = document.getElementById('testServerBtn');
+    const testStatus = document.getElementById('testStatus');
+
+    // Live quality display
     qualitySlider.addEventListener('input', () => {
       qualityDisplay.textContent = qualitySlider.value + '%';
     });
 
+    // Toggle server mode
+    serverModeToggle.addEventListener('click', () => {
+      serverModeToggle.classList.toggle('active');
+      const isActive = serverModeToggle.classList.contains('active');
+      serverUrlField.style.display = isActive ? 'flex' : 'none';
+      serverKeyField.style.display = isActive ? 'flex' : 'none';
+      modeText.textContent = isActive ? 'Using server mode' : 'Using demo mode';
+    });
+
+    // Test server connection
+    testServerBtn.addEventListener('click', async () => {
+      const url = document.getElementById('serverUrl').value.trim();
+      if (!url) {
+        showTestStatus('Enter a server URL', 'error');
+        return;
+      }
+
+      showTestStatus('Testing connection…', 'loading');
+      try {
+        const res = await fetch(url + '/health', { method: 'GET', timeout: 5000 });
+        if (res.ok) {
+          showTestStatus('✓ Server connected', 'success');
+        } else {
+          showTestStatus('Server returned ' + res.status, 'error');
+        }
+      } catch (e) {
+        showTestStatus('Connection failed: ' + e.message, 'error');
+      }
+    });
+
+    function showTestStatus(msg, type) {
+      testStatus.textContent = msg;
+      if (type === 'loading') {
+        testStatus.innerHTML = '<div class="spinner"></div>' + msg;
+      } else {
+        testStatus.textContent = msg;
+      }
+      testStatus.className = 'status-msg ' + type;
+    }
+
     // Save
     document.getElementById('saveBtn').addEventListener('click', () => {
+      const serverMode = serverModeToggle.classList.contains('active');
       chrome.storage.sync.set({
+        serverMode,
+        serverUrl: document.getElementById('serverUrl').value,
+        serverKey: document.getElementById('serverKey').value,
         apiKey: document.getElementById('apiKey').value,
         bugApiEndpoint: document.getElementById('bugApiEndpoint').value,
         apiToken: document.getElementById('apiToken').value,
@@ -323,9 +511,23 @@
 
     // Load
     chrome.storage.sync.get({
-      apiKey: '', bugApiEndpoint: '', apiToken: '',
-      bugPriority: 'medium', screenshotQuality: 90
+      serverMode: false,
+      serverUrl: '',
+      serverKey: '',
+      apiKey: '',
+      bugApiEndpoint: '',
+      apiToken: '',
+      bugPriority: 'medium',
+      screenshotQuality: 90
     }, (items) => {
+      if (items.serverMode) {
+        serverModeToggle.classList.add('active');
+        serverUrlField.style.display = 'flex';
+        serverKeyField.style.display = 'flex';
+        modeText.textContent = 'Using server mode';
+      }
+      document.getElementById('serverUrl').value = items.serverUrl;
+      document.getElementById('serverKey').value = items.serverKey;
       document.getElementById('apiKey').value = items.apiKey;
       document.getElementById('bugApiEndpoint').value = items.bugApiEndpoint;
       document.getElementById('apiToken').value = items.apiToken;

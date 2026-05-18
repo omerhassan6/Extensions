@@ -26,6 +26,7 @@ ${issuesText}
 
 Page metadata:
 - URL: ${metadata.url || 'Unknown'}
+- User URL: ${metadata.userUrl || 'Unknown'}
 - Title: ${metadata.title || 'Unknown'}
 - Browser: ${metadata.userAgent || 'Unknown'}
 - Viewport: ${metadata.viewportWidth}x${metadata.viewportHeight}

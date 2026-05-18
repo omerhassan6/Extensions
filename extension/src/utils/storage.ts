@@ -1,3 +1,5 @@
+declare const chrome: any
+
 import { ExtensionSettings } from '../types'
 
 export async function getSettings(): Promise<ExtensionSettings> {
@@ -8,7 +10,10 @@ export async function getSettings(): Promise<ExtensionSettings> {
       apiToken: '',
       bugPriority: 'medium',
       screenshotQuality: 90,
-      autoAnalyze: true
+      autoAnalyze: true,
+      userUrlHeaderName: 'x-user-url',
+      cookieTokenApp: 'none',
+      customCookieName: ''
     }, (items: any) => {
       resolve(items as ExtensionSettings)
     })

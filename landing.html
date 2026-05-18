@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QA Reporter — AI-Powered Bug Reporting</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --primary: #4F46E5;
+      --primary-dark: #4338CA;
+      --purple: #7C3AED;
+      --success: #10B981;
+      --text: #0F172A;
+      --text-light: #64748B;
+      --bg: #F8FAFC;
+      --bg-light: #F1F5F9;
+      --border: #E2E8F0;
+      --white: #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+      background: var(--white);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Header/Nav ──────────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+    }
+
+    .nav-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #4338CA, #7C3AED);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo svg {
+      width: 28px;
+      height: 28px;
+      stroke: #4338CA;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      letter-spacing: -0.1px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4338CA, #7C3AED);
+      color: white;
+      box-shadow: 0 4px 20px rgba(67, 56, 202, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(67, 56, 202, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-light);
+      border-color: #C7D2FE;
+    }
+
+    /* ── Hero Section ────────────────────────────── */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 120px 24px 80px;
+      background: linear-gradient(180deg, rgba(67, 56, 202, 0.05) 0%, rgba(124, 58, 237, 0.03) 100%);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(79, 70, 229, 0.1), transparent);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero h1 {
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+
+    .hero-highlight {
+      background: linear-gradient(135deg, #4338CA, #7C3AED);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--text-light);
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
+    }
+
+    .btn-lg {
+      padding: 14px 32px;
+      font-size: 16px;
+    }
+
+    .hero-image {
+      margin-top: 60px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--border);
+    }
+
+    .hero-image img {
+      width: 100%;
+      display: block;
+    }
+
+    /* ── Features Section ────────────────────────── */
+    .features {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 100px 24px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 42px;
+      font-weight: 900;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-desc {
+      font-size: 18px;
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+    }
+
+    .feature-card {
+      padding: 32px 28px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--white);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      border-color: #C7D2FE;
+      box-shadow: 0 10px 40px rgba(67, 56, 202, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #4338CA, #7C3AED);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .feature-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: white;
+    }
+
+    .feature-card h3 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.3px;
+    }
+
+    .feature-card p {
+      color: var(--text-light);
+      line-height: 1.7;
+    }
+
+    /* ── How It Works ────────────────────────────── */
+    .how-it-works {
+      background: linear-gradient(135deg, #4338CA 0%, #7C3AED 100%);
+      padding: 100px 24px;
+      color: white;
+    }
+
+    .how-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 40px;
+      margin-top: 60px;
+    }
+
+    .step {
+      text-align: center;
+    }
+
+    .step-number {
+      font-size: 48px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      opacity: 0.3;
+    }
+
+    .step h3 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .step p {
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+
+    /* ── Pricing/CTA ─────────────────────────────── */
+    .cta-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 100px 24px;
+      text-align: center;
+    }
+
+    .pricing-card {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 32px;
+      max-width: 500px;
+      margin: 0 auto;
+      transition: all 0.3s ease;
+    }
+
+    .pricing-card:hover {
+      border-color: #C7D2FE;
+      box-shadow: 0 15px 50px rgba(67, 56, 202, 0.15);
+    }
+
+    .price {
+      font-size: 48px;
+      font-weight: 900;
+      margin: 20px 0;
+      background: linear-gradient(135deg, #4338CA, #7C3AED);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .price-label {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 20px;
+    }
+
+    .price-features {
+      text-align: left;
+      margin: 32px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .price-feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-light);
+    }
+
+    .price-feature svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      stroke: var(--success);
+    }
+
+    /* ── Auth Modal ──────────────────────────────── */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px 32px;
+      max-width: 420px;
+      width: 100%;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      background: var(--bg);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--text-light);
+      transition: background 0.2s;
+    }
+
+    .modal-close:hover {
+      background: var(--bg-light);
+    }
+
+    .modal-header {
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .modal-header h2 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .modal-header p {
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    .auth-option {
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      transition: all 0.2s;
+      margin-bottom: 12px;
+    }
+
+    .auth-option:hover {
+      border-color: #C7D2FE;
+      background: var(--bg);
+    }
+
+    .auth-option svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: var(--text-light);
+      font-size: 13px;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .auth-input {
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .auth-input:focus {
+      border-color: var(--primary);
+      background: var(--bg);
+    }
+
+    /* ── Success Screen ──────────────────────────── */
+    .success-screen {
+      display: none;
+      text-align: center;
+    }
+
+    .success-screen.active {
+      display: block;
+    }
+
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #4338CA, #7C3AED);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .success-icon svg {
+      width: 36px;
+      height: 36px;
+      stroke: white;
+    }
+
+    .success-screen h3 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .success-screen p {
+      color: var(--text-light);
+      margin-bottom: 28px;
+    }
+
+    /* ── Footer ──────────────────────────────────── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    /* ── Responsive ──────────────────────────────── */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 36px; }
+      .section-title { font-size: 28px; }
+      .hero-cta { flex-direction: column; }
+      .btn-lg { width: 100%; }
+      .how-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-wrapper">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+        QA Reporter
+      </div>
+      <div class="nav-actions">
+        <button class="btn btn-secondary">Docs</button>
+        <button class="btn btn-primary" onclick="openAuthModal()">Get Started</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>AI-Powered <span class="hero-highlight">Bug Reports</span></h1>
+      <p>Capture screenshots and generate comprehensive bug reports in seconds. Powered by Claude AI and built for QA teams.</p>
+
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg" onclick="openAuthModal()">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/><path d="M12.5 7H11v6l5.2 3.2.8-1.3-4.5-2.7z"/>
+          </svg>
+          Start Free Trial
+        </button>
+        <button class="btn btn-secondary btn-lg">Watch Demo</button>
+      </div>
+
+      <div class="hero-image">
+        <svg viewBox="0 0 800 500" style="width: 100%; height: auto; background: linear-gradient(135deg, #4338CA 0%, #7C3AED 100%); border-radius: 16px;" xmlns="http://www.w3.org/2000/svg">
+          <rect width="800" height="500" fill="url(#grad)"/>
+          <defs>
+            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#4338CA;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <text x="400" y="250" text-anchor="middle" fill="white" font-size="32" font-weight="bold" dy=".3em">QA Reporter Extension Preview</text>
+          <text x="400" y="290" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="16">Beautiful UI • Instant Analysis • Smart Reports</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="section-header">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Everything You Need</h2>
+      <p class="section-desc">Streamline your QA workflow with intelligent automation and beautiful reports</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
+          </svg>
+        </div>
+        <h3>One-Click Capture</h3>
+        <p>Screenshot any webpage instantly and analyze UI issues with AI in seconds</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <h3>AI Analysis</h3>
+        <p>Claude AI detects alignment, spacing, contrast, and styling issues automatically</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </div>
+        <h3>Smart Reports</h3>
+        <p>Generate professional bug reports with reproduction steps and severity levels</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+        </div>
+        <h3>Integrations</h3>
+        <p>Connect to Jira, ClickUp, or custom APIs to submit bugs directly</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 11H5m14 0a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2m14 0V9a2 2 0 0 0-2-2M5 11V9m14 0a2 2 0 0 0-2-2m-6 16h6v-8H7v8z"/>
+          </svg>
+        </div>
+        <h3>Server Mode</h3>
+        <p>Deploy your own backend or use our cloud service without API keys</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <h3>Privacy First</h3>
+        <p>Screenshots stay private. Optional server mode keeps data on your infrastructure</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <div class="how-content">
+      <div class="section-header" style="color: white;">
+        <div class="section-label" style="color: rgba(255,255,255,0.7);">Process</div>
+        <h2 class="section-title" style="color: white;">How It Works</h2>
+      </div>
+
+      <div class="how-grid">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Sign In with Gmail</h3>
+          <p>Quick login with your Google account, no passwords to remember</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Add to Chrome</h3>
+          <p>Install the extension with one click to start using immediately</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Capture & Analyze</h3>
+          <p>Click the extension icon and screenshot any webpage for instant AI analysis</p>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <h3>Generate & Share</h3>
+          <p>Get professional bug reports and share directly with your team or tracker</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA/Pricing -->
+  <section class="cta-section">
+    <div class="section-header">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-title">Free to Start</h2>
+      <p class="section-desc">No credit card required. Upgrade anytime for advanced features</p>
+    </div>
+
+    <div class="pricing-card">
+      <h3 style="font-size: 24px; font-weight: 800;">Free Tier</h3>
+      <div class="price-label">Everything you need to get started</div>
+      <div class="price">$0</div>
+      <div class="price-label" style="margin-bottom: 0;">Forever free</div>
+
+      <div class="price-features">
+        <div class="price-feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Unlimited screenshots</span>
+        </div>
+        <div class="price-feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>AI-powered analysis</span>
+        </div>
+        <div class="price-feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Report generation</span>
+        </div>
+        <div class="price-feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Team collaboration</span>
+        </div>
+        <div class="price-feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Browser integrations</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-lg" onclick="openAuthModal()" style="margin-top: 32px; width: 100%;">Get Started Free</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2024 QA Reporter. Built for QA teams. | <a href="#" style="color: var(--primary); text-decoration: none;">Privacy</a> • <a href="#" style="color: var(--primary); text-decoration: none;">Terms</a></p>
+  </footer>
+
+  <!-- Auth Modal -->
+  <div class="modal-backdrop" id="authModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeAuthModal()">×</button>
+
+      <!-- Login Form -->
+      <div id="loginScreen">
+        <div class="modal-header">
+          <h2>Welcome</h2>
+          <p>Sign in to get started with QA Reporter</p>
+        </div>
+
+        <button class="auth-option" onclick="gmailLogin()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-divider">or</div>
+
+        <div class="auth-form">
+          <input type="email" class="auth-input" placeholder="Enter your email" id="emailInput">
+          <button class="btn btn-primary" style="width: 100%; padding: 11px;" onclick="emailLogin()">Continue with Email</button>
+        </div>
+
+        <p style="font-size: 12px; color: var(--text-light); margin-top: 20px; line-height: 1.6;">
+          By signing in, you agree to our Terms of Service and Privacy Policy
+        </p>
+      </div>
+
+      <!-- Success Screen -->
+      <div id="successScreen" class="success-screen">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <h3>Welcome to QA Reporter!</h3>
+        <p>Your account has been created successfully</p>
+        <button class="btn btn-primary" style="width: 100%; padding: 11px;" onclick="addExtensionToChrome()">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          Add to Chrome
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openAuthModal() {
+      document.getElementById('authModal').classList.add('active');
+      document.getElementById('loginScreen').style.display = 'block';
+      document.getElementById('successScreen').classList.remove('active');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.remove('active');
+    }
+
+    function gmailLogin() {
+      // In production, this would use Google OAuth 2.0
+      // For demo, we'll show success after a brief delay
+      console.log('Gmail login initiated');
+      setTimeout(() => {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('successScreen').classList.add('active');
+      }, 1000);
+    }
+
+    function emailLogin() {
+      const email = document.getElementById('emailInput').value;
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid email');
+        return;
+      }
+      // In production, send to backend
+      console.log('Email login:', email);
+      setTimeout(() => {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('successScreen').classList.add('active');
+      }, 1000);
+    }
+
+    function addExtensionToChrome() {
+      // In production, this would link to your Chrome Web Store listing
+      // https://chrome.google.com/webstore/detail/YOUR_EXTENSION_ID
+      alert('Redirecting to Chrome Web Store...\n\nIn production, this would open:\nhttps://chrome.google.com/webstore/detail/qa-reporter');
+      window.open('https://chrome.google.com/webstore', '_blank');
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('authModal').addEventListener('click', (e) => {
+      if (e.target.id === 'authModal') closeAuthModal();
+    });
+
+    // Enter key to login
+    document.getElementById('emailInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') emailLogin();
+    });
+  </script>
+</body>
+</html>

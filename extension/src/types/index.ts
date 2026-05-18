@@ -8,6 +8,7 @@ export interface ScreenshotResponse {
   success: boolean
   screenshot?: string
   metadata?: PageMetadata
+  cookieToken?: string
   error?: string
 }
 
@@ -32,6 +33,7 @@ export interface PageMetadata {
   viewportHeight: number
   userAgent: string
   devicePixelRatio: number
+  userUrl?: string
 }
 
 export interface UIIssue {
@@ -85,6 +87,9 @@ export interface ExtensionSettings {
   bugPriority: 'low' | 'medium' | 'high' | 'critical'
   screenshotQuality: number
   autoAnalyze: boolean
+  userUrlHeaderName: string
+  cookieTokenApp: 'none' | 'applicationA' | 'applicationB' | 'custom'
+  customCookieName: string
 }
 
 export interface HistoryItem {

@@ -86,7 +86,7 @@ exports.generateJiraRequest = (report) => {
     fields: {
       project: { key: 'QA' },
       summary: report.title,
-      description: `${report.description}
+      description: `${repport.description}
 
 *Expected Behavior:*
 ${report.expectedBehavior}

@@ -1,3 +1,5 @@
+declare const chrome: any
+
 import { PageMetadata, ScreenshotResponse } from '../types'
 
 export class ScreenshotService {

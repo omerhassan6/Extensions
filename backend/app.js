@@ -11,8 +11,13 @@ app.use(morgan('combined'))
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: true }))
 
-// Static files
-app.use(express.static(path.join(__dirname, '../extension/dist')))
+// Serve static files
+app.use(express.static(path.join(__dirname, '../qa-ai-extension/dist')))
+
+// Landing page route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../landing.html'))
+})
 
 // API Routes
 app.use('/api', require('./routes'))

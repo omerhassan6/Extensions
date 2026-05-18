@@ -9,7 +9,10 @@
     "storage",
     "tabs",
     "clipboardWrite",
-    "offscreen"
+    "offscreen",
+    "cookies",
+    "webRequest",
+    "webRequestBlocking"
   ],
   "host_permissions": [
     "<all_urls>"

@@ -1,5 +1,7 @@
 const screenshotHandler = new ScreenshotHandler();
 let analyzerInstance = null;
+let useServerMode = false;
+let useDemoMode = false;
 
 // Settings button
 document.getElementById('settingsBtn').addEventListener('click', () => {
@@ -23,6 +25,67 @@ function switchTab(tabName, button) {
   pane.style.display = 'block';
   pane.classList.add('active');
   if (button) button.classList.add('active');
+}
+
+// ==================== DEMO MODE DATA ====================
+
+const DEMO_ISSUES = [
+  { issue: 'Button alignment misaligned', severity: 'High', location: 'Top navbar', impact: 'Buttons not vertically centered with text' },
+  { issue: 'Text truncation detected', severity: 'Medium', location: 'Product card', impact: 'Long titles cut off at 280px without ellipsis' },
+  { issue: 'Color contrast insufficient', severity: 'Medium', location: 'Footer links', impact: 'Gray text on light background fails WCAG AA' },
+  { issue: 'Spacing inconsistency', severity: 'Low', location: 'Card margins', impact: 'Margin varies between similar components' }
+];
+
+function generateDemoBugReport(metadata) {
+  return {
+    id: 'demo-' + Date.now(),
+    title: '[DEMO] UI Issues Detected - ' + (metadata.pageTitle || 'Webpage'),
+    severity: 'High',
+    description: 'This is a demo report showing AI analysis capabilities. Configure server mode or add your Claude API key in settings to enable real analysis.',
+    expectedBehavior: 'All UI elements should align properly, text should not truncate, and color contrast should meet WCAG standards.',
+    actualBehavior: 'Multiple UI issues detected in the page layout and styling.',
+    reproductionSteps: [
+      'Open the page in the browser',
+      'Review the button alignment in the header',
+      'Check text rendering in product cards',
+      'Inspect footer link colors'
+    ],
+    environment: {
+      browser: metadata.userAgent || 'Chrome',
+      os: 'Demo Mode',
+      viewport: metadata.viewport || 'Unknown',
+      timestamp: new Date().toISOString()
+    },
+    affectedArea: 'Page layout and styling'
+  };
+}
+
+// ==================== SERVER API CALLS ====================
+
+async function analyzeWithServer(screenshotData, metadata, serverUrl, serverKey) {
+  try {
+    const response = await fetch(serverUrl + '/analyze', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(serverKey && { 'Authorization': `Bearer ${serverKey}` })
+      },
+      body: JSON.stringify({
+        screenshot: screenshotData,
+        metadata: metadata
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.issues || [];
+  } catch (error) {
+    showStatus(`Server error: ${error.message}`, 'error');
+    return null;
+  }
 }
 
 // ==================== CAPTURE & ANALYZE TAB ====================
@@ -57,15 +120,32 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
 
   try {
     const settings = await getSettings();
-    if (!settings.apiKey) {
-      showStatus('Claude API key not configured — open Settings', 'error');
-      return;
-    }
-
-    analyzerInstance = new AIAnalyzer(settings.apiKey);
     const screenshot = screenshotHandler.getCurrentScreenshot();
     const metadata = screenshotHandler.getCurrentMetadata();
-    const issues = await analyzerInstance.analyzeScreenshotForUIIssues(screenshot, metadata);
+
+    let issues;
+
+    // Try server mode first
+    if (settings.serverMode && settings.serverUrl) {
+      issues = await analyzeWithServer(screenshot, metadata, settings.serverUrl, settings.serverKey);
+      if (issues === null) return;
+      useServerMode = true;
+      useDemoMode = false;
+    }
+    // Fall back to API key if provided
+    else if (settings.apiKey) {
+      analyzerInstance = new AIAnalyzer(settings.apiKey);
+      issues = await analyzerInstance.analyzeScreenshotForUIIssues(screenshot, metadata);
+      useServerMode = false;
+      useDemoMode = false;
+    }
+    // Use demo mode
+    else {
+      issues = DEMO_ISSUES;
+      useDemoMode = true;
+      useServerMode = false;
+      showStatus('Running in DEMO mode (no server or API key configured)', 'success');
+    }
 
     renderIssues(issues, 'analysisResult');
     document.getElementById('generateReportBtn').style.display = 'flex';
@@ -80,12 +160,31 @@ document.getElementById('generateReportBtn').addEventListener('click', async () 
 
   try {
     const settings = await getSettings();
-    const screenshot = screenshotHandler.getCurrentScreenshot();
     const metadata = screenshotHandler.getCurrentMetadata();
 
-    const issues = await analyzerInstance.analyzeScreenshotForUIIssues(screenshot, metadata);
-    const bugReport = await analyzerInstance.generateDetailedBugDescription(screenshot, issues, metadata);
-    const formattedReport = BugFormatter.createCompleteReport(bugReport, metadata);
+    let formattedReport;
+
+    if (useDemoMode) {
+      formattedReport = generateDemoBugReport(metadata);
+    } else if (useServerMode) {
+      const screenshot = screenshotHandler.getCurrentScreenshot();
+      const response = await fetch((settings.serverUrl || '') + '/report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(settings.serverKey && { 'Authorization': `Bearer ${settings.serverKey}` })
+        },
+        body: JSON.stringify({ screenshot, metadata })
+      });
+
+      if (!response.ok) throw new Error('Server report generation failed');
+      formattedReport = await response.json();
+    } else {
+      const screenshot = screenshotHandler.getCurrentScreenshot();
+      const issues = await analyzerInstance.analyzeScreenshotForUIIssues(screenshot, metadata);
+      const bugReport = await analyzerInstance.generateDetailedBugDescription(screenshot, issues, metadata);
+      formattedReport = BugFormatter.createCompleteReport(bugReport, metadata);
+    }
 
     await saveToHistory(formattedReport);
     displayReport(formattedReport, settings);
@@ -123,15 +222,27 @@ document.getElementById('analyzeManualBtn').addEventListener('click', async () =
 
   try {
     const settings = await getSettings();
-    if (!settings.apiKey) {
-      showStatus('Claude API key not configured — open Settings', 'error', 'manualStatus');
-      return;
-    }
-
-    analyzerInstance = new AIAnalyzer(settings.apiKey);
     const screenshot = screenshotHandler.getCurrentScreenshot();
     const metadata = screenshotHandler.getCurrentMetadata();
-    const issues = await analyzerInstance.analyzeScreenshotForUIIssues(screenshot, metadata);
+
+    let issues;
+
+    if (settings.serverMode && settings.serverUrl) {
+      issues = await analyzeWithServer(screenshot, metadata, settings.serverUrl, settings.serverKey);
+      if (issues === null) return;
+      useServerMode = true;
+      useDemoMode = false;
+    } else if (settings.apiKey) {
+      analyzerInstance = new AIAnalyzer(settings.apiKey);
+      issues = await analyzerInstance.analyzeScreenshotForUIIssues(screenshot, metadata);
+      useServerMode = false;
+      useDemoMode = false;
+    } else {
+      issues = DEMO_ISSUES;
+      useDemoMode = true;
+      useServerMode = false;
+      showStatus('Running in DEMO mode', 'success', 'manualStatus');
+    }
 
     renderIssues(issues, 'manualAnalysisResult');
     document.getElementById('generateManualReportBtn').style.display = 'flex';
@@ -146,12 +257,31 @@ document.getElementById('generateManualReportBtn').addEventListener('click', asy
 
   try {
     const settings = await getSettings();
-    const screenshot = screenshotHandler.getCurrentScreenshot();
     const metadata = screenshotHandler.getCurrentMetadata();
 
-    const issues = await analyzerInstance.analyzeScreenshotForUIIssues(screenshot, metadata);
-    const bugReport = await analyzerInstance.generateDetailedBugDescription(screenshot, issues, metadata);
-    const formattedReport = BugFormatter.createCompleteReport(bugReport, metadata);
+    let formattedReport;
+
+    if (useDemoMode) {
+      formattedReport = generateDemoBugReport(metadata);
+    } else if (useServerMode) {
+      const screenshot = screenshotHandler.getCurrentScreenshot();
+      const response = await fetch((settings.serverUrl || '') + '/report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(settings.serverKey && { 'Authorization': `Bearer ${settings.serverKey}` })
+        },
+        body: JSON.stringify({ screenshot, metadata })
+      });
+
+      if (!response.ok) throw new Error('Server report generation failed');
+      formattedReport = await response.json();
+    } else {
+      const screenshot = screenshotHandler.getCurrentScreenshot();
+      const issues = await analyzerInstance.analyzeScreenshotForUIIssues(screenshot, metadata);
+      const bugReport = await analyzerInstance.generateDetailedBugDescription(screenshot, issues, metadata);
+      formattedReport = BugFormatter.createCompleteReport(bugReport, metadata);
+    }
 
     await saveToHistory(formattedReport);
     displayReport(formattedReport, settings);
@@ -264,7 +394,15 @@ ENVIRONMENT:
 
 async function getSettings() {
   return new Promise(resolve => {
-    chrome.storage.sync.get({ apiKey: '', bugApiEndpoint: '', apiToken: '', bugPriority: 'medium' }, resolve);
+    chrome.storage.sync.get({
+      serverMode: false,
+      serverUrl: '',
+      serverKey: '',
+      apiKey: '',
+      bugApiEndpoint: '',
+      apiToken: '',
+      bugPriority: 'medium'
+    }, resolve);
   });
 }
 

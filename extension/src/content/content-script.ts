@@ -1,5 +1,7 @@
+declare const chrome: any
+
 // Listen for messages from background script
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request: any, sender: any, sendResponse: any) => {
   if (request.action === 'startCapture') {
     // Message popup to start capture flow
     chrome.runtime.sendMessage({
