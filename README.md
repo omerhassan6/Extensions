@@ -136,18 +136,6 @@ qa-ai-extension/
 
 ### Backend Setup (.env)
 
-```env
-# Server
-NODE_ENV=development
-PORT=3000
-HOST=localhost
-
-# Claude AI
-CLAUDE_API_KEY=your_claude_api_key_here
-
-# Frontend
-FRONTEND_URL=http://localhost:5173
-```
 
 ### Extension Setup
 
