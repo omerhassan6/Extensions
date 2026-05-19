@@ -33,14 +33,20 @@
   <!-- ───────── Connect screen (shown first run) ───────── -->
   <section id="connectScreen" class="screen" style="display:none">
     <div class="connect-hero">
-      <div class="connect-glow"></div>
-      <h2 class="connect-title">Connect Your AI Backend</h2>
-      <p class="connect-sub">Choose how QA Reporter generates bug reports.</p>
+      <div class="connect-hero-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+      </div>
+      <h2 class="connect-title">Connect QA Reporter</h2>
+      <p class="connect-sub">Choose how to power AI bug analysis.</p>
     </div>
 
     <div class="connect-cards">
 
-      <button class="connect-card" data-mode="server">
+      <!-- div instead of button to avoid invalid nested-button HTML -->
+      <div class="connect-card" data-mode="server" tabindex="0" role="button">
         <div class="connect-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
         <div class="connect-card-body">
           <div class="connect-card-title">Connect to Server <span class="recommended">Recommended</span></div>
@@ -51,24 +57,24 @@
             <div class="connect-test-status" id="connectTestStatus"></div>
           </div>
         </div>
-      </button>
+      </div>
 
-      <button class="connect-card" data-mode="api">
+      <div class="connect-card" data-mode="api" tabindex="0" role="button">
         <div class="connect-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
         <div class="connect-card-body">
           <div class="connect-card-title">Bring your Claude key</div>
           <div class="connect-card-desc">Direct API mode. Stays in browser.</div>
           <input type="password" id="connectApiKey" placeholder="sk-ant-…" autocomplete="off">
         </div>
-      </button>
+      </div>
 
-      <button class="connect-card" data-mode="demo">
+      <div class="connect-card" data-mode="demo" tabindex="0" role="button">
         <div class="connect-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
         <div class="connect-card-body">
           <div class="connect-card-title">Try Demo Mode</div>
           <div class="connect-card-desc">No setup. Uses canned analysis data to try the flow.</div>
         </div>
-      </button>
+      </div>
 
     </div>
 
