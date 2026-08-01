@@ -21,6 +21,13 @@
       "runtimeArgs": ["run", "watch"],
       "cwd": "qa-ai-extension",
       "port": null
+    },
+    {
+      "name": "perf-platform",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "3100"],
+      "cwd": "perf-platform",
+      "port": 3100
     }
   ]
 }
