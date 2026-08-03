@@ -5,7 +5,11 @@
       "Bash(npm -v)",
       "Bash(npx --yes create-next-app@latest --version)",
       "Bash(npx --yes create-next-app@latest perf-platform --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --no-turbopack)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(git push *)",
+      "Bash(gh pr *)",
+      "Read(//c/Program Files/GitHub CLI/**)",
+      "Bash(where gh *)"
     ]
   }
 }
